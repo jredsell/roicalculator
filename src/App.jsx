@@ -7,11 +7,11 @@ import UseCaseManager from './components/UseCaseManager'
 import ResultsDashboard from './components/ResultsDashboard'
 
 const DEFAULT_GLOBAL_SETTINGS = {
-  agentLicenseCost: 50, // per agent/month
-  aiEnablementCost: 20, // per agent/month
+  agentLicenseCost: 65, // per agent/month
+  aiEnablementCost: 5, // per agent/month
   numberOfAgents: 100, // Total number of agents to base the global cost on
-  includedAiUnits: 10000, // units included per agent
-  additionalBundleCost: 15, // Cost per bundle
+  includedAiUnits: 1000, // units included per agent
+  additionalBundleCost: 95, // Cost per bundle
   additionalBundleSize: 50000, // Units per bundle
   fteWeeklyHours: 37.5 // Hours
 }
@@ -82,8 +82,10 @@ function App() {
 
     // Total Savings (Cost avoided by automating - Cost of AI software + Cost of Base Software)
     // Actually, saving is: Human Cost Avoided - (Total AI Software Cost - Base Software Cost)
-    const netMonthlySavings = totalCurrentAgentCostMonthly - (totalAiMonthlyCost - baseSoftwareCost)
+    const incrementalAiCost = totalAiMonthlyCost - baseSoftwareCost
+    const netMonthlySavings = totalCurrentAgentCostMonthly - incrementalAiCost
     const netYearlySavings = netMonthlySavings * 12
+    const roiPercentage = incrementalAiCost > 0 ? (netMonthlySavings / incrementalAiCost) * 100 : (netMonthlySavings > 0 ? 100 : 0)
 
     return {
       totalUnitsRequired,
@@ -91,13 +93,15 @@ function App() {
       extraUnitsNeeded,
       bundlesNeeded,
       totalAiMonthlyCost,
+      incrementalAiCost,
       baseSoftwareCost,
       totalTimeSavedMinutes,
       totalTimeSavedHours: totalTimeSavedMinutes / 60,
       totalFteSaved,
       totalCurrentAgentCostMonthly,
       netMonthlySavings,
-      netYearlySavings
+      netYearlySavings,
+      roiPercentage
     }
   }, [globalSettings, useCases])
 
@@ -138,7 +142,8 @@ function App() {
       ['Total FTEs Saved', results.totalFteSaved],
       ['Current Human Handling Cost (£/Mo)', results.totalCurrentAgentCostMonthly],
       ['Net Monthly Savings (£)', results.netMonthlySavings],
-      ['Net Yearly Savings (£)', results.netYearlySavings]
+      ['Net Yearly Savings (£)', results.netYearlySavings],
+      ['Estimated ROI (%)', results.roiPercentage]
     ];
 
     const wb = XLSX.utils.book_new();

@@ -42,7 +42,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
       {/* Top Metrics Summary */}
-      <div className="grid-2">
+      <div className="grid-3">
         <div className="card">
           <div className="flex items-center gap-2 mb-4">
             <div style={{ padding: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: 'var(--radius-md)' }}>
@@ -77,6 +77,24 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
           </div>
           <p className="metric-subtext mt-4">
             Based on {globalSettings.fteWeeklyHours} hour work week. These agents can be repurposed to higher-value tasks.
+          </p>
+        </div>
+
+        <div className="card">
+          <div className="flex items-center gap-2 mb-4">
+            <div style={{ padding: '0.5rem', background: 'rgba(139, 92, 246, 0.1)', borderRadius: 'var(--radius-md)' }}>
+              <Clock size={24} color="var(--accent-primary)" />
+            </div>
+            <h3 style={{ margin: 0 }}>Estimated ROI</h3>
+          </div>
+          <div className="metric-value" style={{ fontSize: '2.5rem', color: 'var(--accent-primary)' }}>
+            {formatNumber(results.roiPercentage)}%
+          </div>
+          <div className="text-secondary mt-2">
+            Return on AI Investment
+          </div>
+          <p className="metric-subtext mt-4">
+            Calculated as net savings divided by the incremental cost of the AI software.
           </p>
         </div>
       </div>
