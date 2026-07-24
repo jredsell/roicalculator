@@ -151,6 +151,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   className="form-input no-print" 
                   value={uc.actualHandlingTime} 
                   onChange={(e) => updateUseCase(uc.id, 'actualHandlingTime', parseNumber(e.target.value))}
+                  step="any"
                 />
               </div>
 
@@ -161,11 +162,12 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   className="form-input no-print" 
                   value={uc.handoverTimeSaved} 
                   onChange={(e) => updateUseCase(uc.id, 'handoverTimeSaved', parseNumber(e.target.value))}
+                  step="any"
                 />
               </div>
 
               <div className="form-group">
-                {renderLabel("Fully Loaded Cost (£/yr) ℹ️", uc.fullyLoadedAgentCost, "Includes salary, benefits, taxes, equipment, and facility costs.")}
+                {renderLabel("Human Agent Cost (£/yr) ℹ️", uc.fullyLoadedAgentCost, "Includes salary, benefits, taxes, equipment, and facility costs.")}
                 <div className="input-wrapper">
                   <span className="input-icon no-print">£</span>
                   <input 

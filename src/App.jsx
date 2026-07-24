@@ -126,7 +126,7 @@ function App() {
     ];
     
     const useCasesData = [
-      ['Name', 'Category', 'Interactions/Mo', 'Engagement (%)', 'Resolution (%)', 'Units/Interaction', 'Full Time (mins)', 'Handover Time (mins)', 'Fully Loaded Cost (£/yr)'],
+      ['Name', 'Category', 'Interactions/Mo', 'Engagement (%)', 'Resolution (%)', 'Units/Interaction', 'Full Time (mins)', 'Handover Time (mins)', 'Human Agent Cost (£/yr)'],
       ...useCases.map(uc => [
         uc.name,
         uc.category,
@@ -239,7 +239,7 @@ function App() {
                 <th>Units / Interaction</th>
                 <th>Full Time (mins)</th>
                 <th>Handover Time (mins)</th>
-                <th>Cost (£/yr)</th>
+                <th>Human Agent Cost (£/yr)</th>
               </tr>
             </thead>
             <tbody>
