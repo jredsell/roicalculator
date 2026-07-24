@@ -22,8 +22,10 @@ const DEFAULT_USE_CASE = {
   category: 'Triage',
   unitsPerInteraction: 5,
   totalInteractions: 5000,
-  percentToAutomate: 40,
+  engagementRate: 100,
+  resolutionRate: 40,
   actualHandlingTime: 3, // minutes
+  handoverTimeSaved: 1, // minutes
   fullyLoadedAgentCost: 35000 // Annual cost
 }
 
@@ -46,13 +48,17 @@ function App() {
     const monthlyMinutesPerFte = monthlyHoursPerFte * 60
 
     useCases.forEach(uc => {
-      const automatedInteractions = (uc.totalInteractions || 0) * ((uc.percentToAutomate || 0) / 100)
+      const engagedInteractions = (uc.totalInteractions || 0) * ((uc.engagementRate || 0) / 100)
+      const fullyResolvedInteractions = engagedInteractions * ((uc.resolutionRate || 0) / 100)
+      const handedOverInteractions = engagedInteractions - fullyResolvedInteractions
       
       // Units for this use case
-      totalUnitsRequired += automatedInteractions * (uc.unitsPerInteraction || 0)
+      totalUnitsRequired += engagedInteractions * (uc.unitsPerInteraction || 0)
       
       // Time saved (minutes) per month
-      const timeSaved = automatedInteractions * (uc.actualHandlingTime || 0)
+      const fullTimeSaved = fullyResolvedInteractions * (uc.actualHandlingTime || 0)
+      const partialTimeSaved = handedOverInteractions * (uc.handoverTimeSaved || 0)
+      const timeSaved = fullTimeSaved + partialTimeSaved
       totalTimeSavedMinutes += timeSaved
       
       // FTEs saved for this use case
@@ -118,14 +124,16 @@ function App() {
     ];
     
     const useCasesData = [
-      ['Name', 'Category', 'Interactions/Mo', 'Automation Target (%)', 'Units/Interaction', 'Handling Time (mins)', 'Fully Loaded Cost (£/yr)'],
+      ['Name', 'Category', 'Interactions/Mo', 'Engagement (%)', 'Resolution (%)', 'Units/Interaction', 'Full Time (mins)', 'Handover Time (mins)', 'Fully Loaded Cost (£/yr)'],
       ...useCases.map(uc => [
         uc.name,
         uc.category,
         uc.totalInteractions,
-        uc.percentToAutomate,
+        uc.engagementRate,
+        uc.resolutionRate,
         uc.unitsPerInteraction,
         uc.actualHandlingTime,
+        uc.handoverTimeSaved,
         uc.fullyLoadedAgentCost
       ])
     ];
@@ -224,10 +232,12 @@ function App() {
                 <th>Use Case Name</th>
                 <th>Category</th>
                 <th>Interactions / Mo</th>
-                <th>Automation Target</th>
+                <th>Engagement (%)</th>
+                <th>Resolution (%)</th>
                 <th>Units / Interaction</th>
-                <th>Handling Time (mins)</th>
-                <th>Fully Loaded Cost (£/yr)</th>
+                <th>Full Time (mins)</th>
+                <th>Handover Time (mins)</th>
+                <th>Cost (£/yr)</th>
               </tr>
             </thead>
             <tbody>
@@ -236,9 +246,11 @@ function App() {
                   <td>{uc.name}</td>
                   <td>{uc.category}</td>
                   <td>{(uc.totalInteractions || 0).toLocaleString()}</td>
-                  <td>{uc.percentToAutomate || 0}%</td>
+                  <td>{uc.engagementRate || 0}%</td>
+                  <td>{uc.resolutionRate || 0}%</td>
                   <td>{(uc.unitsPerInteraction || 0).toLocaleString()}</td>
                   <td>{uc.actualHandlingTime || 0}</td>
+                  <td>{uc.handoverTimeSaved || 0}</td>
                   <td>£{(uc.fullyLoadedAgentCost || 0).toLocaleString()}</td>
                 </tr>
               ))}

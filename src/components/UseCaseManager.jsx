@@ -12,8 +12,10 @@ export default function UseCaseManager({ useCases, setUseCases }) {
       category: 'General Enquiries',
       unitsPerInteraction: 10,
       totalInteractions: 1000,
-      percentToAutomate: 50,
+      engagementRate: 100,
+      resolutionRate: 50,
       actualHandlingTime: 5,
+      handoverTimeSaved: 1.5,
       fullyLoadedAgentCost: 35000
     }])
   }
@@ -99,21 +101,35 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </div>
 
               <div className="form-group">
-                {renderLabel("Automation Target (%)", uc.percentToAutomate)}
+                {renderLabel("AI Engagement Rate (%) ℹ️", uc.engagementRate, "Percentage of interactions the AI will intercept and consume units for.")}
                 <div className="input-wrapper">
                   <input 
                     type="number" 
                     className="form-input no-print" 
-                    value={uc.percentToAutomate} 
+                    value={uc.engagementRate} 
                     onChange={(e) => {
                       let val = parseNumber(e.target.value);
-                      if (val !== '') {
-                        val = Math.max(0, Math.min(100, val));
-                      }
-                      updateUseCase(uc.id, 'percentToAutomate', val);
+                      if (val !== '') val = Math.max(0, Math.min(100, val));
+                      updateUseCase(uc.id, 'engagementRate', val);
                     }}
-                    max="100"
-                    min="0"
+                    max="100" min="0"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                {renderLabel("Full Resolution Rate (%) ℹ️", uc.resolutionRate, "Of the engaged interactions, what % does the AI solve completely without a human?")}
+                <div className="input-wrapper">
+                  <input 
+                    type="number" 
+                    className="form-input no-print" 
+                    value={uc.resolutionRate} 
+                    onChange={(e) => {
+                      let val = parseNumber(e.target.value);
+                      if (val !== '') val = Math.max(0, Math.min(100, val));
+                      updateUseCase(uc.id, 'resolutionRate', val);
+                    }}
+                    max="100" min="0"
                   />
                 </div>
               </div>
@@ -129,12 +145,22 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </div>
 
               <div className="form-group">
-                {renderLabel("Agent Handling Time (mins)", uc.actualHandlingTime)}
+                {renderLabel("Full Agent Handling Time (mins)", uc.actualHandlingTime)}
                 <input 
                   type="number" 
                   className="form-input no-print" 
                   value={uc.actualHandlingTime} 
                   onChange={(e) => updateUseCase(uc.id, 'actualHandlingTime', parseNumber(e.target.value))}
+                />
+              </div>
+
+              <div className="form-group">
+                {renderLabel("Time Saved on Handover (mins) ℹ️", uc.handoverTimeSaved, "Time saved by the AI doing triage/data collection before handing over to an agent.")}
+                <input 
+                  type="number" 
+                  className="form-input no-print" 
+                  value={uc.handoverTimeSaved} 
+                  onChange={(e) => updateUseCase(uc.id, 'handoverTimeSaved', parseNumber(e.target.value))}
                 />
               </div>
 
@@ -155,21 +181,29 @@ export default function UseCaseManager({ useCases, setUseCases }) {
             <div className="mt-4 pt-4" style={{ borderTop: '1px dashed var(--border-color)' }}>
               <div className="grid-3">
                 <div>
-                  <div className="metric-label">Automated Volume</div>
+                  <div className="metric-label">Total Engaged / Mo</div>
                   <div className="metric-value" style={{ fontSize: '1.25rem' }}>
-                    {Math.round(uc.totalInteractions * (uc.percentToAutomate / 100)).toLocaleString()} / mo
+                    {Math.round(uc.totalInteractions * (uc.engagementRate / 100)).toLocaleString()}
+                  </div>
+                  <div className="metric-subtext">
+                    {Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * (uc.resolutionRate / 100)).toLocaleString()} Resolved | {Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * (1 - (uc.resolutionRate / 100))).toLocaleString()} Handover
                   </div>
                 </div>
                 <div>
-                  <div className="metric-label">Units Required</div>
+                  <div className="metric-label">Total Units Required</div>
                   <div className="metric-value primary" style={{ fontSize: '1.25rem' }}>
-                    {Math.round((uc.totalInteractions * (uc.percentToAutomate / 100)) * uc.unitsPerInteraction).toLocaleString()}
+                    {Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * uc.unitsPerInteraction).toLocaleString()}
                   </div>
                 </div>
                 <div>
-                  <div className="metric-label">Human Time Saved</div>
+                  <div className="metric-label">Total Human Time Saved</div>
                   <div className="metric-value success" style={{ fontSize: '1.25rem' }}>
-                    {Math.round((uc.totalInteractions * (uc.percentToAutomate / 100) * uc.actualHandlingTime) / 60).toLocaleString()} hrs
+                    {(() => {
+                      const engaged = uc.totalInteractions * (uc.engagementRate / 100);
+                      const resolved = engaged * (uc.resolutionRate / 100);
+                      const handover = engaged - resolved;
+                      return Math.round(((resolved * uc.actualHandlingTime) + (handover * uc.handoverTimeSaved)) / 60).toLocaleString();
+                    })()} hrs
                   </div>
                 </div>
               </div>

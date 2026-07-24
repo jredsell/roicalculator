@@ -441,6 +441,12 @@ h1 {
 }
 
 /* Print Styles for PDF */
+.metric-subtext {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
 @media print {
   @page {
     size: landscape;

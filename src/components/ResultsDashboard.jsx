@@ -24,12 +24,15 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
 
   // Prepare data for Use Case Breakdown
   const useCaseData = useCases.map(uc => {
-    const automatedInteractions = uc.totalInteractions * (uc.percentToAutomate / 100)
+    const engagedInteractions = uc.totalInteractions * (uc.engagementRate / 100);
+    const fullyResolvedInteractions = engagedInteractions * (uc.resolutionRate / 100);
+    const handedOverInteractions = engagedInteractions - fullyResolvedInteractions;
+
     return {
       name: uc.name,
-      units: automatedInteractions * uc.unitsPerInteraction,
-      timeSavedHours: (automatedInteractions * uc.actualHandlingTime) / 60
-    }
+      units: engagedInteractions * uc.unitsPerInteraction,
+      timeSavedHours: ((fullyResolvedInteractions * uc.actualHandlingTime) + (handedOverInteractions * uc.handoverTimeSaved)) / 60
+    };
   }).filter(uc => uc.units > 0)
 
   const COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444']
