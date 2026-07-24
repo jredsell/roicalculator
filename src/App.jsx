@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Calculator, Download, Plus, Settings, BarChart3 } from 'lucide-react'
-import html2pdf from 'html2pdf.js'
+import * as XLSX from 'xlsx'
 
 import GlobalSettings from './components/GlobalSettings'
 import UseCaseManager from './components/UseCaseManager'
@@ -101,22 +101,58 @@ function App() {
     }
   }, [globalSettings, useCases])
 
-  const exportPDF = () => {
-    const element = document.getElementById('report-content')
-    const opt = {
-      margin:       10,
-      filename:     'AI_ROI_Report.pdf',
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2 },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }
+  const exportExcel = () => {
+    const settingsData = [
+      ['Setting', 'Value'],
+      ['Total Number of Human Agents', globalSettings.numberOfAgents],
+      ['Agent License Cost (£/month)', globalSettings.agentLicenseCost],
+      ['AI Enablement Cost (£/agent/month)', globalSettings.aiEnablementCost],
+      ['Included AI Units (per agent/month)', globalSettings.includedAiUnits],
+      ['Additional Bundle Cost (£)', globalSettings.additionalBundleCost],
+      ['Additional Bundle Size (Units)', globalSettings.additionalBundleSize],
+      ['FTE Weekly Working Hours', globalSettings.fteWeeklyHours],
+    ];
     
-    // Temporarily add a class to body or wrapper to hide non-print elements
-    document.body.classList.add('exporting-pdf')
+    const useCasesData = [
+      ['Name', 'Category', 'Interactions/Mo', 'Automation Target (%)', 'Units/Interaction', 'Handling Time (mins)', 'Fully Loaded Cost (£/yr)'],
+      ...useCases.map(uc => [
+        uc.name,
+        uc.category,
+        uc.totalInteractions,
+        uc.percentToAutomate,
+        uc.unitsPerInteraction,
+        uc.actualHandlingTime,
+        uc.fullyLoadedAgentCost
+      ])
+    ];
+
+    const resultsData = [
+      ['Metric', 'Value'],
+      ['Total Units Required/Mo', results.totalUnitsRequired],
+      ['Included Units', results.totalIncludedUnits],
+      ['Extra Units Needed', results.extraUnitsNeeded],
+      ['Bundles Needed', results.bundlesNeeded],
+      ['Total AI Monthly Cost (£)', results.totalAiMonthlyCost],
+      ['Base Software Cost (£)', results.baseSoftwareCost],
+      ['Total Time Saved (Hours/Mo)', results.totalTimeSavedHours],
+      ['Total FTEs Saved', results.totalFteSaved],
+      ['Current Human Handling Cost (£/Mo)', results.totalCurrentAgentCostMonthly],
+      ['Net Monthly Savings (£)', results.netMonthlySavings],
+      ['Net Yearly Savings (£)', results.netYearlySavings]
+    ];
+
+    const wb = XLSX.utils.book_new();
     
-    html2pdf().set(opt).from(element).save().then(() => {
-      document.body.classList.remove('exporting-pdf')
-    })
+    const wsSettings = XLSX.utils.aoa_to_sheet(settingsData);
+    XLSX.utils.book_append_sheet(wb, wsSettings, "Global Settings");
+    
+    const wsUseCases = XLSX.utils.aoa_to_sheet(useCasesData);
+    XLSX.utils.book_append_sheet(wb, wsUseCases, "Use Cases");
+    
+    const wsResults = XLSX.utils.aoa_to_sheet(resultsData);
+    XLSX.utils.book_append_sheet(wb, wsResults, "Results Summary");
+    
+    XLSX.writeFile(wb, 'AI_ROI_Report.xlsx');
   }
 
   return (
@@ -145,8 +181,8 @@ function App() {
           >
             <Settings size={18} /> Settings
           </button>
-          <button className="btn btn-secondary" onClick={exportPDF}>
-            <Download size={18} /> Export PDF
+          <button className="btn btn-secondary" onClick={exportExcel}>
+            <Download size={18} /> Export Excel
           </button>
         </div>
       </header>
