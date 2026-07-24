@@ -68,7 +68,6 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   onChange={(e) => updateUseCase(uc.id, 'name', e.target.value)}
                   style={{ width: '250px', padding: '0.375rem 0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', fontWeight: 600, fontSize: '1.1rem' }}
                 />
-                <span className="print-value use-case-title">{uc.name}</span>
               </div>
               <button className="btn btn-icon btn-danger no-print" onClick={() => removeUseCase(uc.id)}>
                 <Trash2 size={16} />
@@ -87,7 +86,6 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
                 </select>
-                <span className="print-value">{uc.category}</span>
               </div>
 
               <div className="form-group">
@@ -98,7 +96,6 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   value={uc.totalInteractions} 
                   onChange={(e) => updateUseCase(uc.id, 'totalInteractions', parseNumber(e.target.value))}
                 />
-                <span className="print-value">{(uc.totalInteractions || 0).toLocaleString()}</span>
               </div>
 
               <div className="form-group">
@@ -112,7 +109,6 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                     max="100"
                     min="0"
                   />
-                  <span className="print-value">{uc.percentToAutomate || 0}%</span>
                 </div>
               </div>
 
@@ -124,7 +120,6 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   value={uc.unitsPerInteraction} 
                   onChange={(e) => updateUseCase(uc.id, 'unitsPerInteraction', parseNumber(e.target.value))}
                 />
-                <span className="print-value">{(uc.unitsPerInteraction || 0).toLocaleString()}</span>
               </div>
 
               <div className="form-group">
@@ -135,7 +130,6 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   value={uc.actualHandlingTime} 
                   onChange={(e) => updateUseCase(uc.id, 'actualHandlingTime', parseNumber(e.target.value))}
                 />
-                <span className="print-value">{uc.actualHandlingTime || 0} mins</span>
               </div>
 
               <div className="form-group">
@@ -148,7 +142,6 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                     value={uc.fullyLoadedAgentCost} 
                     onChange={(e) => updateUseCase(uc.id, 'fullyLoadedAgentCost', parseNumber(e.target.value))}
                   />
-                  <span className="print-value">£{(uc.fullyLoadedAgentCost || 0).toLocaleString()}</span>
                 </div>
               </div>
             </div>
