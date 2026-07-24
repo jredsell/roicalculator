@@ -42,42 +42,43 @@ function App() {
 
     // Working hours calculations
     // 37.5 hours/week * 52 weeks / 12 months = average monthly hours per FTE
-    const monthlyHoursPerFte = (globalSettings.fteWeeklyHours * 52) / 12
+    const monthlyHoursPerFte = ((globalSettings.fteWeeklyHours || 0) * 52) / 12
     const monthlyMinutesPerFte = monthlyHoursPerFte * 60
 
     useCases.forEach(uc => {
-      const automatedInteractions = uc.totalInteractions * (uc.percentToAutomate / 100)
+      const automatedInteractions = (uc.totalInteractions || 0) * ((uc.percentToAutomate || 0) / 100)
       
       // Units for this use case
-      totalUnitsRequired += automatedInteractions * uc.unitsPerInteraction
+      totalUnitsRequired += automatedInteractions * (uc.unitsPerInteraction || 0)
       
       // Time saved (minutes) per month
-      const timeSaved = automatedInteractions * uc.actualHandlingTime
+      const timeSaved = automatedInteractions * (uc.actualHandlingTime || 0)
       totalTimeSavedMinutes += timeSaved
       
       // FTEs saved for this use case
-      const fteSaved = timeSaved / monthlyMinutesPerFte
+      const fteSaved = monthlyMinutesPerFte > 0 ? (timeSaved / monthlyMinutesPerFte) : 0
       totalFteSaved += fteSaved
 
       // Current human cost (monthly) for the automated portion if humans did it
       // Annual cost / 12 = monthly cost per FTE
-      const monthlyFteCost = uc.fullyLoadedAgentCost / 12
+      const monthlyFteCost = (uc.fullyLoadedAgentCost || 0) / 12
       totalCurrentAgentCostMonthly += fteSaved * monthlyFteCost
     })
 
     // Global AI Costs
-    const totalIncludedUnits = globalSettings.numberOfAgents * globalSettings.includedAiUnits
-    const baseAiMonthlyCost = globalSettings.numberOfAgents * (globalSettings.aiEnablementCost + globalSettings.agentLicenseCost)
+    const totalIncludedUnits = (globalSettings.numberOfAgents || 0) * (globalSettings.includedAiUnits || 0)
+    const baseAiMonthlyCost = (globalSettings.numberOfAgents || 0) * ((globalSettings.aiEnablementCost || 0) + (globalSettings.agentLicenseCost || 0))
     
     // Additional Bundles needed
     const extraUnitsNeeded = Math.max(0, totalUnitsRequired - totalIncludedUnits)
-    const bundlesNeeded = Math.ceil(extraUnitsNeeded / globalSettings.additionalBundleSize)
-    const additionalBundlesCost = bundlesNeeded * globalSettings.additionalBundleCost
+    const bundleSize = globalSettings.additionalBundleSize || 1
+    const bundlesNeeded = Math.ceil(extraUnitsNeeded / bundleSize)
+    const additionalBundlesCost = bundlesNeeded * (globalSettings.additionalBundleCost || 0)
     
     const totalAiMonthlyCost = baseAiMonthlyCost + additionalBundlesCost
 
     // Base software cost without AI (just the agent licenses)
-    const baseSoftwareCost = globalSettings.numberOfAgents * globalSettings.agentLicenseCost
+    const baseSoftwareCost = (globalSettings.numberOfAgents || 0) * (globalSettings.agentLicenseCost || 0)
 
     // Total Savings (Cost avoided by automating - Cost of AI software + Cost of Base Software)
     // Actually, saving is: Human Cost Avoided - (Total AI Software Cost - Base Software Cost)

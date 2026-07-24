@@ -401,6 +401,10 @@ h1 {
   display: flex;
 }
 
+.text-danger {
+  color: var(--accent-danger) !important;
+}
+
 .justify-between {
   justify-content: space-between;
 }
@@ -473,3 +477,16 @@ h1 {
 .print-value {
   display: none;
 }
+
+/* Force PDF elements to stack and take full width */
+body.exporting-pdf .grid-2,
+body.exporting-pdf .grid-3 {
+  display: block;
+}
+
+body.exporting-pdf .grid-2 > div,
+body.exporting-pdf .grid-3 > div {
+  width: 100%;
+  margin-bottom: 2rem;
+}
+

@@ -31,6 +31,18 @@ export default function UseCaseManager({ useCases, setUseCases }) {
     }))
   }
 
+  const parseNumber = (val) => {
+    if (val === '') return '';
+    const parsed = parseFloat(val);
+    return Number.isNaN(parsed) ? '' : parsed;
+  }
+
+  const renderLabel = (text, value, title) => (
+    <label className={`form-label ${value === '' ? 'text-danger' : ''}`} title={title}>
+      {text} {value === '' && '*'}
+    </label>
+  )
+
   return (
     <div className="card">
       <div className="use-case-header">
@@ -51,7 +63,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                 <span className="badge">Use Case {index + 1}</span>
                 <input 
                   type="text" 
-                  className="form-input no-print" 
+                  className={`form-input no-print ${uc.name === '' ? 'text-danger' : ''}`} 
                   value={uc.name} 
                   onChange={(e) => updateUseCase(uc.id, 'name', e.target.value)}
                   style={{ width: '250px', padding: '0.375rem 0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', fontWeight: 600, fontSize: '1.1rem' }}
@@ -79,64 +91,64 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Total Monthly Interactions</label>
+                {renderLabel("Total Monthly Interactions", uc.totalInteractions)}
                 <input 
                   type="number" 
                   className="form-input no-print" 
                   value={uc.totalInteractions} 
-                  onChange={(e) => updateUseCase(uc.id, 'totalInteractions', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => updateUseCase(uc.id, 'totalInteractions', parseNumber(e.target.value))}
                 />
-                <span className="print-value">{uc.totalInteractions.toLocaleString()}</span>
+                <span className="print-value">{(uc.totalInteractions || 0).toLocaleString()}</span>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Automation Target (%)</label>
+                {renderLabel("Automation Target (%)", uc.percentToAutomate)}
                 <div className="input-wrapper">
                   <input 
                     type="number" 
                     className="form-input no-print" 
                     value={uc.percentToAutomate} 
-                    onChange={(e) => updateUseCase(uc.id, 'percentToAutomate', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => updateUseCase(uc.id, 'percentToAutomate', parseNumber(e.target.value))}
                     max="100"
                     min="0"
                   />
-                  <span className="print-value">{uc.percentToAutomate}%</span>
+                  <span className="print-value">{uc.percentToAutomate || 0}%</span>
                 </div>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Units per Interaction</label>
+                {renderLabel("Units per Interaction", uc.unitsPerInteraction)}
                 <input 
                   type="number" 
                   className="form-input no-print" 
                   value={uc.unitsPerInteraction} 
-                  onChange={(e) => updateUseCase(uc.id, 'unitsPerInteraction', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => updateUseCase(uc.id, 'unitsPerInteraction', parseNumber(e.target.value))}
                 />
-                <span className="print-value">{uc.unitsPerInteraction.toLocaleString()}</span>
+                <span className="print-value">{(uc.unitsPerInteraction || 0).toLocaleString()}</span>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Agent Handling Time (mins)</label>
+                {renderLabel("Agent Handling Time (mins)", uc.actualHandlingTime)}
                 <input 
                   type="number" 
                   className="form-input no-print" 
                   value={uc.actualHandlingTime} 
-                  onChange={(e) => updateUseCase(uc.id, 'actualHandlingTime', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => updateUseCase(uc.id, 'actualHandlingTime', parseNumber(e.target.value))}
                 />
-                <span className="print-value">{uc.actualHandlingTime} mins</span>
+                <span className="print-value">{uc.actualHandlingTime || 0} mins</span>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Fully Loaded Cost (£/yr)</label>
+                {renderLabel("Fully Loaded Cost (£/yr) ℹ️", uc.fullyLoadedAgentCost, "Includes salary, benefits, taxes, equipment, and facility costs.")}
                 <div className="input-wrapper">
                   <span className="input-icon no-print">£</span>
                   <input 
                     type="number" 
                     className="form-input no-print" 
                     value={uc.fullyLoadedAgentCost} 
-                    onChange={(e) => updateUseCase(uc.id, 'fullyLoadedAgentCost', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => updateUseCase(uc.id, 'fullyLoadedAgentCost', parseNumber(e.target.value))}
                   />
-                  <span className="print-value">£{uc.fullyLoadedAgentCost.toLocaleString()}</span>
+                  <span className="print-value">£{(uc.fullyLoadedAgentCost || 0).toLocaleString()}</span>
                 </div>
               </div>
             </div>
