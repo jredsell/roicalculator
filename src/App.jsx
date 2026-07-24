@@ -92,6 +92,7 @@ function App() {
     const netMonthlySavings = totalCurrentAgentCostMonthly - incrementalAiCost
     const netYearlySavings = netMonthlySavings * 12
     const roiPercentage = incrementalAiCost > 0 ? (netMonthlySavings / incrementalAiCost) * 100 : (netMonthlySavings > 0 ? 100 : 0)
+    const paybackMonths = totalCurrentAgentCostMonthly > 0 ? (incrementalAiCost * 12) / totalCurrentAgentCostMonthly : 0
 
     return {
       totalUnitsRequired,
@@ -107,7 +108,8 @@ function App() {
       totalCurrentAgentCostMonthly,
       netMonthlySavings,
       netYearlySavings,
-      roiPercentage
+      roiPercentage,
+      paybackMonths
     }
   }, [globalSettings, useCases])
 

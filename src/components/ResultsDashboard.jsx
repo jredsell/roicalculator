@@ -94,10 +94,10 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
             {formatNumber(results.roiPercentage)}%
           </div>
           <div className="text-secondary mt-2">
-            Return on AI Investment
+            Payback Period: {results.paybackMonths.toFixed(1)} months
           </div>
           <p className="metric-subtext mt-4">
-            Calculated as net savings divided by the incremental cost of the AI software.
+            Calculated as net savings divided by the incremental cost of the AI software. Payback assumes an annual investment.
           </p>
         </div>
       </div>
