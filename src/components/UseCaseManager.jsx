@@ -78,7 +78,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
 
             <div className="grid-3">
               <div className="form-group">
-                <label className="form-label">Category</label>
+                <label className="form-label" title="The category or type of interaction.">Category ℹ️</label>
                 <select 
                   className="form-select no-print" 
                   value={uc.category} 
@@ -91,7 +91,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </div>
 
               <div className="form-group">
-                {renderLabel("Total Monthly Interactions", uc.totalInteractions)}
+                {renderLabel("Total Monthly Interactions ℹ️", uc.totalInteractions, "The total volume of these specific interactions per month.")}
                 <input 
                   type="number" 
                   className="form-input no-print" 
@@ -135,7 +135,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </div>
 
               <div className="form-group">
-                {renderLabel("Units per Interaction", uc.unitsPerInteraction)}
+                {renderLabel("Units per Interaction ℹ️", uc.unitsPerInteraction, "The number of AI units consumed each time the AI engages with this interaction.")}
                 <input 
                   type="number" 
                   className="form-input no-print" 
@@ -145,7 +145,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </div>
 
               <div className="form-group">
-                {renderLabel("Full Agent Handling Time (mins)", uc.actualHandlingTime)}
+                {renderLabel("Full Agent Handling Time (mins) ℹ️", uc.actualHandlingTime, "The total time a human agent would normally take to fully resolve this interaction.")}
                 <input 
                   type="number" 
                   className="form-input no-print" 

@@ -225,9 +225,33 @@ function App() {
           </div>
         )}
 
-        {/* Print-Only Use Case Table (Page 2) */}
-        <div className="print-only page-break-before">
-          <h2 style={{ marginBottom: '1rem', color: 'black' }}>Use Case Breakdown</h2>
+        {/* Print-Only Tables */}
+        <div className="print-only use-case-print-table" style={{ marginTop: '2rem' }}>
+          <h2>Global Assumptions</h2>
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
+            <thead>
+              <tr>
+                <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Agent License Cost</th>
+                <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>AI Enablement Cost</th>
+                <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Included Units/Agent</th>
+                <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Bundle (Units/Cost)</th>
+                <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>FTE Weekly Hours</th>
+                <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Total Agents</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>£{globalSettings.agentLicenseCost} / mo</td>
+                <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>£{globalSettings.aiEnablementCost} / mo</td>
+                <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{(globalSettings.includedAiUnits || 0).toLocaleString()}</td>
+                <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{(globalSettings.additionalBundleSize || 0).toLocaleString()} for £{globalSettings.additionalBundleCost}</td>
+                <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{globalSettings.fteWeeklyHours}</td>
+                <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{globalSettings.numberOfAgents}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Use Case Breakdown</h2>
           <table className="use-case-print-table">
             <thead>
               <tr>
