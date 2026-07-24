@@ -442,51 +442,79 @@ h1 {
 
 /* Print Styles for PDF */
 @media print {
+  @page {
+    size: landscape;
+    margin: 10mm;
+  }
+  
   body {
     background: white;
     color: black;
+    background-image: none;
   }
-  .card, .metric-card, .use-case-item, .chart-wrapper, .form-input, .form-select {
+  
+  .app-container {
+    max-width: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .card, .metric-card, .chart-wrapper {
     background: white;
     border: 1px solid #e2e8f0;
-    box-shadow: none;
+    box-shadow: none !important;
     color: black;
+    break-inside: avoid;
   }
-  .text-primary, h1, h2, h3, .metric-value, .use-case-title, .card-title {
+  
+  .text-primary, h1, h2, h3, .metric-value, .card-title {
     color: black !important;
   }
-  .text-secondary, .text-muted, .form-label, .metric-label {
+  
+  .text-secondary, .text-muted, .metric-label {
     color: #475569 !important;
   }
-  .badge {
-    background: #eff6ff;
-    color: #2563eb;
-    border: 1px solid #bfdbfe;
-  }
+
   /* Hide interactive elements when printing */
   .no-print, .btn, input, select {
     display: none !important;
   }
-  /* Show values instead of inputs for print */
-  .print-value {
+
+  .print-only {
     display: block !important;
-    font-weight: 600;
+  }
+  
+  .page-break-before {
+    page-break-before: always;
   }
 }
 
-.print-value {
+.print-only {
   display: none;
 }
 
-/* Force PDF elements to stack and take full width */
-body.exporting-pdf .grid-2,
-body.exporting-pdf .grid-3 {
-  display: block;
+/* Use Case Print Table */
+.use-case-print-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+  font-size: 0.85rem;
 }
 
-body.exporting-pdf .grid-2 > div,
-body.exporting-pdf .grid-3 > div {
-  width: 100%;
-  margin-bottom: 2rem;
+.use-case-print-table th,
+.use-case-print-table td {
+  border: 1px solid #cbd5e1;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.use-case-print-table th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.use-case-print-table tbody tr:nth-child(even) {
+  background-color: #f8fafc;
 }
 

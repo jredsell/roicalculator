@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Calculator, Download, Plus, Settings, BarChart3 } from 'lucide-react'
+import { Calculator, Download, Plus, Settings, BarChart3, Printer } from 'lucide-react'
 import * as XLSX from 'xlsx'
 
 import GlobalSettings from './components/GlobalSettings'
@@ -186,8 +186,11 @@ function App() {
           >
             <Settings size={18} /> Settings
           </button>
-          <button className="btn btn-secondary" onClick={exportExcel}>
+          <button className="btn btn-secondary no-print" onClick={exportExcel}>
             <Download size={18} /> Export Excel
+          </button>
+          <button className="btn btn-primary no-print" onClick={() => window.print()}>
+            <Printer size={18} /> Generate PDF Report
           </button>
         </div>
       </header>
@@ -203,7 +206,7 @@ function App() {
           <GlobalSettings settings={globalSettings} setSettings={setGlobalSettings} />
         ) : (
           <div className="dashboard-grid">
-            <div>
+            <div className="no-print">
               <UseCaseManager useCases={useCases} setUseCases={setUseCases} />
             </div>
             <div>
@@ -211,6 +214,37 @@ function App() {
             </div>
           </div>
         )}
+
+        {/* Print-Only Use Case Table (Page 2) */}
+        <div className="print-only page-break-before">
+          <h2 style={{ marginBottom: '1rem', color: 'black' }}>Use Case Breakdown</h2>
+          <table className="use-case-print-table">
+            <thead>
+              <tr>
+                <th>Use Case Name</th>
+                <th>Category</th>
+                <th>Interactions / Mo</th>
+                <th>Automation Target</th>
+                <th>Units / Interaction</th>
+                <th>Handling Time (mins)</th>
+                <th>Fully Loaded Cost (£/yr)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {useCases.map(uc => (
+                <tr key={uc.id}>
+                  <td>{uc.name}</td>
+                  <td>{uc.category}</td>
+                  <td>{(uc.totalInteractions || 0).toLocaleString()}</td>
+                  <td>{uc.percentToAutomate || 0}%</td>
+                  <td>{(uc.unitsPerInteraction || 0).toLocaleString()}</td>
+                  <td>{uc.actualHandlingTime || 0}</td>
+                  <td>£{(uc.fullyLoadedAgentCost || 0).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </main>
     </div>
   )
