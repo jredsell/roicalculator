@@ -105,7 +105,13 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                     type="number" 
                     className="form-input no-print" 
                     value={uc.percentToAutomate} 
-                    onChange={(e) => updateUseCase(uc.id, 'percentToAutomate', parseNumber(e.target.value))}
+                    onChange={(e) => {
+                      let val = parseNumber(e.target.value);
+                      if (val !== '') {
+                        val = Math.max(0, Math.min(100, val));
+                      }
+                      updateUseCase(uc.id, 'percentToAutomate', val);
+                    }}
                     max="100"
                     min="0"
                   />
