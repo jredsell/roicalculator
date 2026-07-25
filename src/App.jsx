@@ -169,13 +169,56 @@ function App() {
 
     const wb = XLSX.utils.book_new();
     
+    // Helper to format cells
+    const formatCells = (ws, formats) => {
+      Object.keys(formats).forEach(cell => {
+        if (ws[cell]) ws[cell].z = formats[cell];
+      });
+    };
+
     const wsSettings = XLSX.utils.aoa_to_sheet(settingsData);
+    wsSettings['!cols'] = [{ wch: 35 }, { wch: 20 }];
+    formatCells(wsSettings, {
+      'B2': '#,##0',
+      'B3': '£#,##0.00',
+      'B4': '£#,##0.00',
+      'B5': '#,##0',
+      'B6': '£#,##0.00',
+      'B7': '#,##0',
+      'B8': '0.0',
+      'B9': '£#,##0.00'
+    });
     XLSX.utils.book_append_sheet(wb, wsSettings, "Global Settings");
     
     const wsUseCases = XLSX.utils.aoa_to_sheet(useCasesData);
+    wsUseCases['!cols'] = [
+      { wch: 25 }, // Name
+      { wch: 20 }, // Category
+      { wch: 15 }, // Interactions/Mo
+      { wch: 15 }, // Engagement (%)
+      { wch: 15 }, // Resolution (%)
+      { wch: 15 }, // Units/Interaction
+      { wch: 15 }, // Full Time (mins)
+      { wch: 25 }  // Handover Time (mins)
+    ];
     XLSX.utils.book_append_sheet(wb, wsUseCases, "Use Cases");
     
     const wsResults = XLSX.utils.aoa_to_sheet(resultsData);
+    wsResults['!cols'] = [{ wch: 35 }, { wch: 20 }];
+    formatCells(wsResults, {
+      'B2': '#,##0',
+      'B3': '#,##0',
+      'B4': '#,##0',
+      'B5': '#,##0',
+      'B6': '£#,##0.00',
+      'B7': '£#,##0.00',
+      'B8': '#,##0.0',
+      'B9': '#,##0.0',
+      'B10': '£#,##0.00',
+      'B11': '£#,##0.00',
+      'B12': '£#,##0.00',
+      'B13': '#,##0.0"%"'
+    });
     XLSX.utils.book_append_sheet(wb, wsResults, "Results Summary");
     
     XLSX.writeFile(wb, 'AI_ROI_Report.xlsx');
