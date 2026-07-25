@@ -1,18 +1,19 @@
 import { useState, useMemo } from 'react'
-import { Calculator, Download, Plus, Settings, BarChart3, Printer } from 'lucide-react'
+import { Calculator, Download, Plus, Settings, BarChart3, Printer, HelpCircle } from 'lucide-react'
 import * as XLSX from 'xlsx'
 
 import GlobalSettings from './components/GlobalSettings'
 import UseCaseManager from './components/UseCaseManager'
 import ResultsDashboard from './components/ResultsDashboard'
+import HelpModal from './components/HelpModal'
 
 const DEFAULT_GLOBAL_SETTINGS = {
-  agentLicenseCost: 65, // per agent/month
-  aiEnablementCost: 5, // per agent/month
+  agentLicenseCost: 0, // per agent/month
+  aiEnablementCost: 0, // per agent/month
   numberOfAgents: 100, // Total number of agents to base the global cost on
-  includedAiUnits: 1000, // units included per agent
-  additionalBundleCost: 95, // Cost per bundle
-  additionalBundleSize: 50000, // Units per bundle
+  includedAiUnits: 0, // units included per agent
+  additionalBundleCost: 0, // Cost per bundle
+  additionalBundleSize: 0, // Units per bundle
   fteWeeklyHours: 37.5 // Hours
 }
 
@@ -20,19 +21,20 @@ const DEFAULT_USE_CASE = {
   id: '1',
   name: 'Initial Triage',
   category: 'Triage',
-  unitsPerInteraction: 5,
+  unitsPerInteraction: 0,
   totalInteractions: 5000,
   engagementRate: 100,
-  resolutionRate: 40,
+  resolutionRate: 0,
   actualHandlingTime: 3, // minutes
   handoverTimeSaved: 1, // minutes
-  fullyLoadedAgentCost: 35000 // Annual cost
+  fullyLoadedAgentCost: 0 // Annual cost
 }
 
 function App() {
   const [globalSettings, setGlobalSettings] = useState(DEFAULT_GLOBAL_SETTINGS)
   const [useCases, setUseCases] = useState([DEFAULT_USE_CASE])
   const [activeTab, setActiveTab] = useState('calculator') // 'calculator', 'settings'
+  const [isHelpOpen, setIsHelpOpen] = useState(false)
 
   // Calculations
   const results = useMemo(() => {
@@ -185,6 +187,12 @@ function App() {
         
         <div className="header-actions">
           <button 
+            className="btn btn-secondary no-print" 
+            onClick={() => setIsHelpOpen(true)}
+          >
+            <HelpCircle size={18} /> Help & Guide
+          </button>
+          <button 
             className={`btn ${activeTab === 'calculator' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setActiveTab('calculator')}
           >
@@ -284,6 +292,8 @@ function App() {
           </table>
         </div>
       </main>
+
+      <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
     </div>
   )
 }

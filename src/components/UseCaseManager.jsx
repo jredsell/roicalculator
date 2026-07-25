@@ -3,6 +3,29 @@ import { Plus, Trash2 } from 'lucide-react'
 
 const CATEGORIES = ['Triage', 'General Enquiries', 'Transactional', 'Data Collection']
 
+const CATEGORY_CONFIG = {
+  'Triage': {
+    description: "Calculates the time saved by having the AI gather initial information and route the customer. The AI doesn't resolve the query, but reduces the time the human agent spends on preamble.",
+    showResolutionRate: false,
+    showHandlingTime: false,
+  },
+  'Data Collection': {
+    description: "Calculates time saved when the AI collects required forms, details, or verifications before passing the conversation to an agent.",
+    showResolutionRate: false,
+    showHandlingTime: false,
+  },
+  'General Enquiries': {
+    description: "Calculates the value of the AI fully resolving common questions without human intervention, plus time saved on interactions it attempts but has to hand over.",
+    showResolutionRate: true,
+    showHandlingTime: true,
+  },
+  'Transactional': {
+    description: "Calculates the ROI of the AI automating end-to-end processes (like booking appointments, password resets, or taking payments).",
+    showResolutionRate: true,
+    showHandlingTime: true,
+  }
+}
+
 export default function UseCaseManager({ useCases, setUseCases }) {
   const addUseCase = () => {
     const newId = Date.now().toString()
@@ -10,13 +33,13 @@ export default function UseCaseManager({ useCases, setUseCases }) {
       id: newId,
       name: 'New Use Case',
       category: 'General Enquiries',
-      unitsPerInteraction: 10,
+      unitsPerInteraction: 0,
       totalInteractions: 1000,
       engagementRate: 100,
       resolutionRate: 50,
       actualHandlingTime: 5,
       handoverTimeSaved: 1.5,
-      fullyLoadedAgentCost: 35000
+      fullyLoadedAgentCost: 0
     }])
   }
 
@@ -27,7 +50,14 @@ export default function UseCaseManager({ useCases, setUseCases }) {
   const updateUseCase = (id, field, value) => {
     setUseCases(useCases.map(uc => {
       if (uc.id === id) {
-        return { ...uc, [field]: value }
+        const updatedUc = { ...uc, [field]: value }
+        if (field === 'category') {
+          const config = CATEGORY_CONFIG[value]
+          if (config && !config.showResolutionRate) {
+            updatedUc.resolutionRate = 0
+          }
+        }
+        return updatedUc
       }
       return uc
     }))
@@ -39,10 +69,13 @@ export default function UseCaseManager({ useCases, setUseCases }) {
     return Number.isNaN(parsed) ? '' : parsed;
   }
 
-  const renderLabel = (text, value, title) => (
-    <label className={`form-label ${value === '' ? 'text-danger' : ''}`} title={title}>
-      {text} {value === '' && '*'}
-    </label>
+  const renderLabel = (text, value, description) => (
+    <div style={{ marginBottom: '0.25rem' }}>
+      <label className={`form-label ${value === '' ? 'text-danger' : ''}`} style={{ marginBottom: '0.125rem' }}>
+        {text} {value === '' && '*'}
+      </label>
+      {description && <div className="text-secondary" style={{ fontSize: '0.75rem', lineHeight: 1.2 }}>{description}</div>}
+    </div>
   )
 
   return (
@@ -76,9 +109,14 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </button>
             </div>
 
+            <div style={{ marginBottom: '1rem', padding: '0.75rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--accent-secondary)' }}>
+              <strong>{uc.category}</strong>: {CATEGORY_CONFIG[uc.category]?.description || ''}
+            </div>
+
             <div className="grid-3">
               <div className="form-group">
-                <label className="form-label" title="The category or type of interaction.">Category ℹ️</label>
+                <label className="form-label" style={{ marginBottom: '0.125rem' }}>Category</label>
+                <div className="text-secondary" style={{ fontSize: '0.75rem', lineHeight: 1.2, marginBottom: '0.25rem' }}>The type of interaction to automate.</div>
                 <select 
                   className="form-select no-print" 
                   value={uc.category} 
@@ -91,7 +129,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </div>
 
               <div className="form-group">
-                {renderLabel("Total Monthly Interactions ℹ️", uc.totalInteractions, "The total volume of these specific interactions per month.")}
+                {renderLabel("Total Monthly Interactions", uc.totalInteractions, "The total volume per month. Drives the baseline scale.")}
                 <input 
                   type="number" 
                   className="form-input no-print" 
@@ -101,7 +139,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </div>
 
               <div className="form-group">
-                {renderLabel("AI Engagement Rate (%) ℹ️", uc.engagementRate, "Percentage of interactions the AI will intercept and consume units for.")}
+                {renderLabel("AI Engagement Rate (%)", uc.engagementRate, "Percentage of interactions the AI intercepts. Affects AI unit consumption.")}
                 <div className="input-wrapper">
                   <input 
                     type="number" 
@@ -118,24 +156,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </div>
 
               <div className="form-group">
-                {renderLabel("Full Resolution Rate (%) ℹ️", uc.resolutionRate, "Of the engaged interactions, what % does the AI solve completely without a human?")}
-                <div className="input-wrapper">
-                  <input 
-                    type="number" 
-                    className="form-input no-print" 
-                    value={uc.resolutionRate} 
-                    onChange={(e) => {
-                      let val = parseNumber(e.target.value);
-                      if (val !== '') val = Math.max(0, Math.min(100, val));
-                      updateUseCase(uc.id, 'resolutionRate', val);
-                    }}
-                    max="100" min="0"
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                {renderLabel("Units per Interaction ℹ️", uc.unitsPerInteraction, "The number of AI units consumed each time the AI engages with this interaction.")}
+                {renderLabel("Units per Interaction", uc.unitsPerInteraction, "Units consumed each time the AI engages. Drives AI Software Cost.")}
                 <input 
                   type="number" 
                   className="form-input no-print" 
@@ -144,19 +165,40 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                 />
               </div>
 
-              <div className="form-group">
-                {renderLabel("Full Agent Handling Time (mins) ℹ️", uc.actualHandlingTime, "The total time a human agent would normally take to fully resolve this interaction.")}
-                <input 
-                  type="number" 
-                  className="form-input no-print" 
-                  value={uc.actualHandlingTime} 
-                  onChange={(e) => updateUseCase(uc.id, 'actualHandlingTime', parseNumber(e.target.value))}
-                  step="any"
-                />
-              </div>
+              {CATEGORY_CONFIG[uc.category]?.showResolutionRate && (
+                <div className="form-group">
+                  {renderLabel("Full Resolution Rate (%)", uc.resolutionRate, "The % the AI solves completely. Calculates primary time saved.")}
+                  <div className="input-wrapper">
+                    <input 
+                      type="number" 
+                      className="form-input no-print" 
+                      value={uc.resolutionRate} 
+                      onChange={(e) => {
+                        let val = parseNumber(e.target.value);
+                        if (val !== '') val = Math.max(0, Math.min(100, val));
+                        updateUseCase(uc.id, 'resolutionRate', val);
+                      }}
+                      max="100" min="0"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {CATEGORY_CONFIG[uc.category]?.showHandlingTime && (
+                <div className="form-group">
+                  {renderLabel("Full Agent Handling Time (mins)", uc.actualHandlingTime, "Normal human time to resolve end-to-end. Used for fully resolved savings.")}
+                  <input 
+                    type="number" 
+                    className="form-input no-print" 
+                    value={uc.actualHandlingTime} 
+                    onChange={(e) => updateUseCase(uc.id, 'actualHandlingTime', parseNumber(e.target.value))}
+                    step="any"
+                  />
+                </div>
+              )}
 
               <div className="form-group">
-                {renderLabel("Time Saved on Handover (mins) ℹ️", uc.handoverTimeSaved, "Time saved by the AI doing triage/data collection before handing over to an agent.")}
+                {renderLabel("Time Saved on Handover (mins)", uc.handoverTimeSaved, "Time saved on interactions that were engaged but NOT fully resolved.")}
                 <input 
                   type="number" 
                   className="form-input no-print" 
@@ -167,7 +209,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </div>
 
               <div className="form-group">
-                {renderLabel("Human Agent Cost (£/yr) ℹ️", uc.fullyLoadedAgentCost, "Includes salary, benefits, taxes, equipment, and facility costs.")}
+                {renderLabel("Human Agent Cost (£/yr)", uc.fullyLoadedAgentCost, "Fully loaded cost of an agent. Converts saved hours into financial savings.")}
                 <div className="input-wrapper">
                   <span className="input-icon no-print">£</span>
                   <input 

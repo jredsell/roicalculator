@@ -24,14 +24,14 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
 
   // Prepare data for Use Case Breakdown
   const useCaseData = useCases.map(uc => {
-    const engagedInteractions = uc.totalInteractions * (uc.engagementRate / 100);
-    const fullyResolvedInteractions = engagedInteractions * (uc.resolutionRate / 100);
+    const engagedInteractions = (uc.totalInteractions || 0) * ((uc.engagementRate || 0) / 100);
+    const fullyResolvedInteractions = engagedInteractions * ((uc.resolutionRate || 0) / 100);
     const handedOverInteractions = engagedInteractions - fullyResolvedInteractions;
 
     return {
       name: uc.name,
-      units: engagedInteractions * uc.unitsPerInteraction,
-      timeSavedHours: ((fullyResolvedInteractions * uc.actualHandlingTime) + (handedOverInteractions * uc.handoverTimeSaved)) / 60
+      units: engagedInteractions * (uc.unitsPerInteraction || 0),
+      timeSavedHours: ((fullyResolvedInteractions * (uc.actualHandlingTime || 0)) + (handedOverInteractions * (uc.handoverTimeSaved || 0))) / 60
     };
   }).filter(uc => uc.units > 0)
 
