@@ -29,7 +29,7 @@ const CATEGORY_CONFIG = {
 export default function UseCaseManager({ useCases, setUseCases }) {
   const addUseCase = () => {
     const newId = Date.now().toString()
-    setUseCases([...useCases, {
+    setUseCases([{
       id: newId,
       name: 'New Use Case',
       category: 'General Enquiries',
@@ -39,7 +39,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
       resolutionRate: 50,
       actualHandlingTime: 5,
       handoverTimeSaved: 1.5
-    }])
+    }, ...useCases])
   }
 
   const removeUseCase = (id) => {
