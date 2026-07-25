@@ -134,7 +134,7 @@ function App() {
       ['Additional Bundle Cost (£)', globalSettings.additionalBundleCost],
       ['Additional Bundle Size (Units)', globalSettings.additionalBundleSize],
       ['FTE Weekly Working Hours', globalSettings.fteWeeklyHours],
-      ['Fully Loaded Agent Cost (£/yr)', globalSettings.fullyLoadedAgentCost],
+      ['FTE Yearly Cost (£)', globalSettings.fullyLoadedAgentCost],
     ];
     
     const useCasesData = [
@@ -260,7 +260,7 @@ function App() {
                 <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Included Units/Agent</th>
                 <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Bundle (Units/Cost)</th>
                 <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>FTE Weekly Hours</th>
-                <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Fully Loaded Agent Cost</th>
+                <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>FTE Yearly Cost</th>
                 <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Total Agents</th>
               </tr>
             </thead>
