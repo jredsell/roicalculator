@@ -48,7 +48,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
       <div className="grid-3">
         <div className="card">
           <div className="flex items-center gap-2 mb-4">
-            <div style={{ padding: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: 'var(--radius-md)' }}>
+            <div style={{ padding: '0.5rem', background: 'var(--success-alpha)', borderRadius: 'var(--radius-md)' }}>
               <TrendingUp size={24} color="var(--accent-success)" />
             </div>
             <h3 style={{ margin: 0 }}>Projected Savings</h3>
@@ -67,7 +67,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
 
         <div className="card">
           <div className="flex items-center gap-2 mb-4">
-            <div style={{ padding: '0.5rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: 'var(--radius-md)' }}>
+            <div style={{ padding: '0.5rem', background: 'var(--secondary-alpha)', borderRadius: 'var(--radius-md)' }}>
               <Users size={24} color="var(--accent-secondary)" />
             </div>
             <h3 style={{ margin: 0 }}>Human Capacity Freed</h3>
@@ -85,7 +85,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
 
         <div className="card">
           <div className="flex items-center gap-2 mb-4">
-            <div style={{ padding: '0.5rem', background: 'rgba(139, 92, 246, 0.1)', borderRadius: 'var(--radius-md)' }}>
+            <div style={{ padding: '0.5rem', background: 'var(--primary-alpha)', borderRadius: 'var(--radius-md)' }}>
               <Clock size={24} color="var(--accent-primary)" />
             </div>
             <h3 style={{ margin: 0 }}>Estimated ROI</h3>
@@ -129,7 +129,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
           </div>
         </div>
         
-        <div className="flex justify-between items-center p-4" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)' }}>
+        <div className="flex justify-between items-center p-4" style={{ background: 'var(--btn-secondary-bg)', borderRadius: 'var(--radius-md)' }}>
           <span className="font-medium text-secondary">Total Monthly Software Cost (Base + AI)</span>
           <span className="metric-value" style={{ fontSize: '1.5rem' }}>{formatCurrency(results.totalAiMonthlyCost)}</span>
         </div>
@@ -145,7 +145,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
                 data={costComparisonData}
                 margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
                 <XAxis dataKey="name" stroke="var(--text-secondary)" />
                 <YAxis stroke="var(--text-secondary)" tickFormatter={(val) => '£' + val} />
                 <Tooltip 

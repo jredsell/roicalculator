@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react'
-import { Calculator, Download, Plus, Settings, BarChart3, Printer, HelpCircle } from 'lucide-react'
+import { useState, useMemo, useEffect } from 'react'
+import { Calculator, Download, Plus, Settings, BarChart3, Printer, HelpCircle, Sun, Moon } from 'lucide-react'
 import * as XLSX from 'xlsx'
 
 import GlobalSettings from './components/GlobalSettings'
@@ -35,6 +35,15 @@ function App() {
   const [useCases, setUseCases] = useState([DEFAULT_USE_CASE])
   const [activeTab, setActiveTab] = useState('calculator') // 'calculator', 'settings'
   const [isHelpOpen, setIsHelpOpen] = useState(false)
+  const [theme, setTheme] = useState('dark')
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+  }
 
   // Calculations
   const results = useMemo(() => {
@@ -186,6 +195,13 @@ function App() {
         </div>
         
         <div className="header-actions">
+          <button 
+            className="btn btn-secondary no-print btn-icon"
+            onClick={toggleTheme}
+            title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
           <button 
             className="btn btn-secondary no-print" 
             onClick={() => setIsHelpOpen(true)}
