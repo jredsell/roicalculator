@@ -14,7 +14,8 @@ const DEFAULT_GLOBAL_SETTINGS = {
   includedAiUnits: 0, // units included per agent
   additionalBundleCost: 0, // Cost per bundle
   additionalBundleSize: 0, // Units per bundle
-  fteWeeklyHours: 37.5 // Hours
+  fteWeeklyHours: 37.5, // Hours
+  fullyLoadedAgentCost: 30000 // Annual cost
 }
 
 const DEFAULT_USE_CASE = {
@@ -26,8 +27,7 @@ const DEFAULT_USE_CASE = {
   engagementRate: 100,
   resolutionRate: 0,
   actualHandlingTime: 3, // minutes
-  handoverTimeSaved: 1, // minutes
-  fullyLoadedAgentCost: 0 // Annual cost
+  handoverTimeSaved: 1 // minutes
 }
 
 function App() {
@@ -78,7 +78,7 @@ function App() {
 
       // Current human cost (monthly) for the automated portion if humans did it
       // Annual cost / 12 = monthly cost per FTE
-      const monthlyFteCost = (uc.fullyLoadedAgentCost || 0) / 12
+      const monthlyFteCost = (globalSettings.fullyLoadedAgentCost || 0) / 12
       totalCurrentAgentCostMonthly += fteSaved * monthlyFteCost
     })
 
@@ -134,10 +134,11 @@ function App() {
       ['Additional Bundle Cost (£)', globalSettings.additionalBundleCost],
       ['Additional Bundle Size (Units)', globalSettings.additionalBundleSize],
       ['FTE Weekly Working Hours', globalSettings.fteWeeklyHours],
+      ['Fully Loaded Agent Cost (£/yr)', globalSettings.fullyLoadedAgentCost],
     ];
     
     const useCasesData = [
-      ['Name', 'Category', 'Interactions/Mo', 'Engagement (%)', 'Resolution (%)', 'Units/Interaction', 'Full Time (mins)', 'Handover Time (mins)', 'Human Agent Cost (£/yr)'],
+      ['Name', 'Category', 'Interactions/Mo', 'Engagement (%)', 'Resolution (%)', 'Units/Interaction', 'Full Time (mins)', 'Handover Time (mins)'],
       ...useCases.map(uc => [
         uc.name,
         uc.category,
@@ -146,8 +147,7 @@ function App() {
         uc.resolutionRate,
         uc.unitsPerInteraction,
         uc.actualHandlingTime,
-        uc.handoverTimeSaved,
-        uc.fullyLoadedAgentCost
+        uc.handoverTimeSaved
       ])
     ];
 
@@ -260,6 +260,7 @@ function App() {
                 <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Included Units/Agent</th>
                 <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Bundle (Units/Cost)</th>
                 <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>FTE Weekly Hours</th>
+                <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Fully Loaded Agent Cost</th>
                 <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Total Agents</th>
               </tr>
             </thead>
@@ -270,6 +271,7 @@ function App() {
                 <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{(globalSettings.includedAiUnits || 0).toLocaleString()}</td>
                 <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{(globalSettings.additionalBundleSize || 0).toLocaleString()} for £{globalSettings.additionalBundleCost}</td>
                 <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{globalSettings.fteWeeklyHours}</td>
+                <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>£{(globalSettings.fullyLoadedAgentCost || 0).toLocaleString()}</td>
                 <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{globalSettings.numberOfAgents}</td>
               </tr>
             </tbody>
@@ -287,7 +289,6 @@ function App() {
                 <th>Units / Interaction</th>
                 <th>Full Time (mins)</th>
                 <th>Handover Time (mins)</th>
-                <th>Human Agent Cost (£/yr)</th>
               </tr>
             </thead>
             <tbody>
@@ -301,7 +302,6 @@ function App() {
                   <td>{(uc.unitsPerInteraction || 0).toLocaleString()}</td>
                   <td>{uc.actualHandlingTime || 0}</td>
                   <td>{uc.handoverTimeSaved || 0}</td>
-                  <td>£{(uc.fullyLoadedAgentCost || 0).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>

@@ -118,6 +118,21 @@ export default function GlobalSettings({ settings, setSettings }) {
           </div>
           <p className="metric-subtext mt-4">Used to calculate FTE savings from time saved.</p>
         </div>
+
+        <div className="form-group">
+          {renderLabel("Fully Loaded Agent Cost (£/yr)", "fullyLoadedAgentCost")}
+          <div className="input-wrapper">
+            <span className="input-icon">£</span>
+            <input 
+              type="number" 
+              className="form-input" 
+              name="fullyLoadedAgentCost"
+              value={settings.fullyLoadedAgentCost}
+              onChange={handleChange}
+            />
+          </div>
+          <p className="metric-subtext mt-4">Average annual cost including salary, taxes, benefits, and overhead.</p>
+        </div>
       </div>
     </div>
   )

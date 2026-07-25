@@ -38,8 +38,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
       engagementRate: 100,
       resolutionRate: 50,
       actualHandlingTime: 5,
-      handoverTimeSaved: 1.5,
-      fullyLoadedAgentCost: 0
+      handoverTimeSaved: 1.5
     }])
   }
 
@@ -206,19 +205,6 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   onChange={(e) => updateUseCase(uc.id, 'handoverTimeSaved', parseNumber(e.target.value))}
                   step="any"
                 />
-              </div>
-
-              <div className="form-group">
-                {renderLabel("Human Agent Cost (£/yr)", uc.fullyLoadedAgentCost, "Fully loaded cost of an agent. Converts saved hours into financial savings.")}
-                <div className="input-wrapper">
-                  <span className="input-icon no-print">£</span>
-                  <input 
-                    type="number" 
-                    className="form-input no-print" 
-                    value={uc.fullyLoadedAgentCost} 
-                    onChange={(e) => updateUseCase(uc.id, 'fullyLoadedAgentCost', parseNumber(e.target.value))}
-                  />
-                </div>
               </div>
             </div>
             
