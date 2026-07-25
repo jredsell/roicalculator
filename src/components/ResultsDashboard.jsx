@@ -45,7 +45,8 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
       {/* Top Metrics Summary */}
-      <div className="grid-3">
+      <div className="print-page">
+        <div className="grid-3">
         <div className="card">
           <div className="flex items-center gap-2 mb-4">
             <div style={{ padding: '0.5rem', background: 'var(--success-alpha)', borderRadius: 'var(--radius-md)' }}>
@@ -101,41 +102,10 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
           </p>
         </div>
       </div>
-
-      {/* AI Units Breakdown */}
-      <div className="card">
-        <div className="flex items-center gap-2 mb-4">
-          <Zap size={20} className="text-primary" />
-          <h3 style={{ margin: 0 }}>AI Unit Consumption & Costs</h3>
-        </div>
-        
-        <div className="grid-3 mb-4">
-          <div className="metric-card">
-            <div className="metric-label">Total Units Required</div>
-            <div className="metric-value">{formatNumber(results.totalUnitsRequired)}</div>
-            <div className="metric-subtext">per month</div>
-          </div>
-          <div className="metric-card">
-            <div className="metric-label">Included Units</div>
-            <div className="metric-value">{formatNumber(results.totalIncludedUnits)}</div>
-            <div className="metric-subtext">Base licenses ({globalSettings.numberOfAgents} agents)</div>
-          </div>
-          <div className="metric-card">
-            <div className="metric-label">Extra Bundles Needed</div>
-            <div className="metric-value">{results.bundlesNeeded}</div>
-            <div className="metric-subtext">
-              Cost: {formatCurrency(results.bundlesNeeded * globalSettings.additionalBundleCost)} / mo
-            </div>
-          </div>
-        </div>
-        
-        <div className="flex justify-between items-center p-4" style={{ background: 'var(--btn-secondary-bg)', borderRadius: 'var(--radius-md)' }}>
-          <span className="font-medium text-secondary">Total Monthly Software Cost (Base + AI)</span>
-          <span className="metric-value" style={{ fontSize: '1.5rem' }}>{formatCurrency(results.totalAiMonthlyCost)}</span>
-        </div>
       </div>
 
       {/* Charts */}
+      <div className="print-page">
       <div className="grid-2">
         <div className="card">
           <h3 className="mb-4">Monthly Cost Comparison (Automated Portion)</h3>
@@ -190,6 +160,42 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
             </ResponsiveContainer>
           </div>
         </div>
+      </div>
+      </div>
+
+      {/* AI Units Breakdown */}
+      <div className="print-page">
+      <div className="card">
+        <div className="flex items-center gap-2 mb-4">
+          <Zap size={20} className="text-primary" />
+          <h3 style={{ margin: 0 }}>AI Unit Consumption & Costs</h3>
+        </div>
+        
+        <div className="grid-3 mb-4">
+          <div className="metric-card">
+            <div className="metric-label">Total Units Required</div>
+            <div className="metric-value">{formatNumber(results.totalUnitsRequired)}</div>
+            <div className="metric-subtext">per month</div>
+          </div>
+          <div className="metric-card">
+            <div className="metric-label">Included Units</div>
+            <div className="metric-value">{formatNumber(results.totalIncludedUnits)}</div>
+            <div className="metric-subtext">Base licenses ({globalSettings.numberOfAgents} agents)</div>
+          </div>
+          <div className="metric-card">
+            <div className="metric-label">Extra Bundles Needed</div>
+            <div className="metric-value">{results.bundlesNeeded}</div>
+            <div className="metric-subtext">
+              Cost: {formatCurrency(results.bundlesNeeded * globalSettings.additionalBundleCost)} / mo
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex justify-between items-center p-4" style={{ background: 'var(--btn-secondary-bg)', borderRadius: 'var(--radius-md)' }}>
+          <span className="font-medium text-secondary">Total Monthly Software Cost (Base + AI)</span>
+          <span className="metric-value" style={{ fontSize: '1.5rem' }}>{formatCurrency(results.totalAiMonthlyCost)}</span>
+        </div>
+      </div>
       </div>
     </div>
   )

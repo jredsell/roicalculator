@@ -646,6 +646,10 @@ h1 {
   .page-break-before {
     page-break-before: always;
   }
+
+  .print-page {
+    break-after: page;
+  }
 }
 
 .print-only {
