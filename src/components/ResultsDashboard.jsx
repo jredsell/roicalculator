@@ -12,12 +12,14 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
       name: 'Human Only Cost',
       'Base Agent Licenses': results.baseSoftwareCost,
       'AI Software Cost': 0,
+      'Speech/Digital Cost': 0,
       'Human Handling Cost': results.totalCurrentAgentCostMonthly,
     },
     {
       name: 'With Virtual Agent',
       'Base Agent Licenses': results.baseSoftwareCost,
-      'AI Software Cost': results.totalAiMonthlyCost - results.baseSoftwareCost,
+      'AI Software Cost': results.totalAiMonthlyCost - results.baseSoftwareCost - results.speechCost - results.additionalDigitalBundlesCost,
+      'Speech/Digital Cost': results.speechCost + results.additionalDigitalBundlesCost,
       'Human Handling Cost': 0, // In this specific calculation, we are looking at the portion being automated.
     }
   ]
@@ -126,6 +128,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
                 <Bar dataKey="Human Handling Cost" stackId="a" fill="var(--text-muted)" />
                 <Bar dataKey="Base Agent Licenses" stackId="a" fill="var(--accent-secondary)" />
                 <Bar dataKey="AI Software Cost" stackId="a" fill="var(--accent-primary)" />
+                <Bar dataKey="Speech/Digital Cost" stackId="a" fill="var(--accent-success)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -186,7 +189,39 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
             <div className="metric-label">Extra Bundles Needed</div>
             <div className="metric-value">{results.bundlesNeeded}</div>
             <div className="metric-subtext">
-              Cost: {formatCurrency(results.bundlesNeeded * globalSettings.additionalBundleCost)} / mo
+              Cost: {formatCurrency(results.additionalBundlesCost)} / mo
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid-2 mb-4">
+          {/* Speech Section */}
+          <div style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+            <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1rem' }}>Voice / Speech Cost</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <span className="text-secondary">Speech Required:</span>
+              <span className="font-medium">{formatNumber(results.totalSpeechHours)} hours</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem' }}>
+              <span className="text-secondary">Speech Cost:</span>
+              <span className="font-medium text-primary">{formatCurrency(results.speechCost)}</span>
+            </div>
+          </div>
+
+          {/* Digital Messages Section */}
+          <div style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+            <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1rem' }}>Digital Messages Cost</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <span className="text-secondary">Msgs Required / Included:</span>
+              <span className="font-medium">{formatNumber(results.totalDigitalMessages)} / {formatNumber(results.totalIncludedDigitalMessages)}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <span className="text-secondary">Extra Bundles Needed:</span>
+              <span className="font-medium">{results.digitalBundlesNeeded}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem' }}>
+              <span className="text-secondary">Extra Msgs Cost:</span>
+              <span className="font-medium text-primary">{formatCurrency(results.additionalDigitalBundlesCost)}</span>
             </div>
           </div>
         </div>

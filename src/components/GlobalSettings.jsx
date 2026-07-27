@@ -106,6 +106,60 @@ export default function GlobalSettings({ settings, setSettings }) {
         </div>
 
         <div className="form-group">
+          {renderLabel("Speech Cost per 100 Hours (£)", "speechCostPer100Hours")}
+          <div className="input-wrapper">
+            <span className="input-icon">£</span>
+            <input 
+              type="number" 
+              className="form-input" 
+              name="speechCostPer100Hours"
+              value={settings.speechCostPer100Hours}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        <div className="form-group">
+          {renderLabel("Bundled Digital Messages (per agent/month)", "includedDigitalMessages")}
+          <div className="input-wrapper">
+            <input 
+              type="number" 
+              className="form-input" 
+              name="includedDigitalMessages"
+              value={settings.includedDigitalMessages}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        <div className="form-group">
+          {renderLabel("Digital Msg Bundle Cost (£)", "additionalDigitalBundleCost")}
+          <div className="input-wrapper">
+            <span className="input-icon">£</span>
+            <input 
+              type="number" 
+              className="form-input" 
+              name="additionalDigitalBundleCost"
+              value={settings.additionalDigitalBundleCost}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        <div className="form-group">
+          {renderLabel("Digital Msg Bundle Size", "additionalDigitalBundleSize")}
+          <div className="input-wrapper">
+            <input 
+              type="number" 
+              className="form-input" 
+              name="additionalDigitalBundleSize"
+              value={settings.additionalDigitalBundleSize}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        <div className="form-group">
           {renderLabel("FTE Weekly Working Hours", "fteWeeklyHours")}
           <div className="input-wrapper">
             <input 

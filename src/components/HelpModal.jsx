@@ -88,6 +88,21 @@ export default function HelpModal({ isOpen, onClose }) {
                 </div>
 
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)' }}>Speech Cost per 100 Hours (£)</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The cost for processing speech in Voice use cases. Calculated in blocks of 100 hours.</p>
+                </div>
+
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)' }}>Bundled Digital Messages</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The number of free digital messages included per agent per month.</p>
+                </div>
+
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)' }}>Digital Msg Bundle Cost & Size</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Cost and amount of extra messages when you exceed the bundled limit.</p>
+                </div>
+
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)' }}>FTE Weekly Working Hours</h4>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Standard hours a Full-Time Equivalent (FTE) works per week. Used to convert saved minutes into FTE savings.</p>
                 </div>
@@ -144,6 +159,14 @@ export default function HelpModal({ isOpen, onClose }) {
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Units per Interaction</h4>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The amount of AI units consumed each time the AI engages with this scenario (affects AI software cost).</p>
+                </div>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Channel</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Choose Voice or Digital. This determines whether to calculate Speech Costs or Digital Messaging Costs.</p>
+                </div>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>AI Talk Time (Voice) / Msgs (Digital)</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The average time the AI spends talking (in minutes), or the number of digital messages per interaction.</p>
                 </div>
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Full Resolution Rate (%)</h4>
@@ -203,7 +226,7 @@ export default function HelpModal({ isOpen, onClose }) {
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>Incremental AI Cost (£)</h4>
                   <code style={{ background: 'var(--bg-color)', padding: '0.5rem', borderRadius: '6px', display: 'block', margin: '0.75rem 0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
-                    (Agents × AI Enablement Cost) + Extra AI Bundles Cost
+                    (Agents × AI Enablement Cost) + Extra AI Bundles Cost + Speech Cost + Extra Digital Msgs Cost
                   </code>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The software cost incurred specifically to run the AI, above standard licenses.</p>
                 </div>

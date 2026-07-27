@@ -7,6 +7,7 @@ const CATEGORY_CONFIG = {
   'Triage': {
     description: "Calculates the time saved by having the AI correctly route customers, eliminating the time human agents spend answering and then transferring calls that went to the wrong area.",
     defaultUnits: 15,
+    defaultDigitalMessages: 5,
     showResolutionRate: false,
     showHandlingTime: false,
     showHandoverTime: false,
@@ -16,6 +17,7 @@ const CATEGORY_CONFIG = {
   'Data Collection': {
     description: "Calculates time saved when the AI collects required forms, details, or verifications before passing the conversation to an agent.",
     defaultUnits: 20,
+    defaultDigitalMessages: 10,
     showResolutionRate: false,
     showHandlingTime: false,
     showHandoverTime: true,
@@ -23,6 +25,7 @@ const CATEGORY_CONFIG = {
   'General Enquiries': {
     description: "Calculates the value of the AI fully resolving common questions without human intervention, plus time saved on interactions it attempts but has to hand over.",
     defaultUnits: 30,
+    defaultDigitalMessages: 10,
     showResolutionRate: true,
     showHandlingTime: true,
     showHandoverTime: true,
@@ -30,6 +33,7 @@ const CATEGORY_CONFIG = {
   'Transactional': {
     description: "Calculates the ROI of the AI automating end-to-end processes (like booking appointments, password resets, or taking payments).",
     defaultUnits: 50,
+    defaultDigitalMessages: 40,
     showResolutionRate: true,
     showHandlingTime: true,
     showHandoverTime: true,
@@ -43,7 +47,10 @@ export default function UseCaseManager({ useCases, setUseCases }) {
       id: newId,
       name: 'New Use Case',
       category: 'General Enquiries',
+      channel: 'Digital',
       unitsPerInteraction: 30,
+      digitalMessagesPerInteraction: 10,
+      aiTalkTime: 3,
       totalInteractions: 1000,
       engagementRate: 100,
       resolutionRate: 50,
@@ -69,6 +76,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               updatedUc.resolutionRate = 0
             }
             updatedUc.unitsPerInteraction = config.defaultUnits
+            updatedUc.digitalMessagesPerInteraction = config.defaultDigitalMessages
           }
         }
         return updatedUc
@@ -143,13 +151,28 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               </div>
 
               <div className="form-group">
+                <label className="form-label" style={{ marginBottom: '0.125rem' }}>Channel</label>
+                <div className="text-secondary" style={{ fontSize: '0.75rem', lineHeight: 1.2, marginBottom: '0.25rem' }}>Voice or Digital.</div>
+                <select 
+                  className="form-select no-print" 
+                  value={uc.channel || 'Voice'} 
+                  onChange={(e) => updateUseCase(uc.id, 'channel', e.target.value)}
+                >
+                  <option value="Voice">Voice</option>
+                  <option value="Digital">Digital</option>
+                </select>
+              </div>
+
+              <div className="form-group">
                 {renderLabel("Total Monthly Interactions", uc.totalInteractions, "The total volume per month. Drives the baseline scale.")}
-                <input 
-                  type="number" 
-                  className="form-input no-print" 
-                  value={uc.totalInteractions} 
-                  onChange={(e) => updateUseCase(uc.id, 'totalInteractions', parseNumber(e.target.value))}
-                />
+                <div className="input-wrapper">
+                  <input 
+                    type="number" 
+                    className="form-input no-print" 
+                    value={uc.totalInteractions} 
+                    onChange={(e) => updateUseCase(uc.id, 'totalInteractions', parseNumber(e.target.value))}
+                  />
+                </div>
               </div>
 
               <div className="form-group">
@@ -171,13 +194,43 @@ export default function UseCaseManager({ useCases, setUseCases }) {
 
               <div className="form-group">
                 {renderLabel("Units per Interaction", uc.unitsPerInteraction, "Units consumed each time the AI engages. Drives AI Software Cost.")}
-                <input 
-                  type="number" 
-                  className="form-input no-print" 
-                  value={uc.unitsPerInteraction} 
-                  onChange={(e) => updateUseCase(uc.id, 'unitsPerInteraction', parseNumber(e.target.value))}
-                />
+                <div className="input-wrapper">
+                  <input 
+                    type="number" 
+                    className="form-input no-print" 
+                    value={uc.unitsPerInteraction} 
+                    onChange={(e) => updateUseCase(uc.id, 'unitsPerInteraction', parseNumber(e.target.value))}
+                  />
+                </div>
               </div>
+
+              {uc.channel === 'Digital' && (
+                <div className="form-group">
+                  {renderLabel("Digital Messages per Interaction", uc.digitalMessagesPerInteraction, "Average number of messages sent in a digital interaction.")}
+                  <div className="input-wrapper">
+                    <input 
+                      type="number" 
+                      className="form-input no-print" 
+                      value={uc.digitalMessagesPerInteraction} 
+                      onChange={(e) => updateUseCase(uc.id, 'digitalMessagesPerInteraction', parseNumber(e.target.value))}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {uc.channel === 'Voice' && (
+                <div className="form-group">
+                  {renderLabel("AI Talk Time (mins)", uc.aiTalkTime, "Average time the AI spends talking. Used for speech costs.")}
+                  <div className="input-wrapper">
+                    <input 
+                      type="number" 
+                      className="form-input no-print" 
+                      value={uc.aiTalkTime} 
+                      onChange={(e) => updateUseCase(uc.id, 'aiTalkTime', parseNumber(e.target.value))}
+                    />
+                  </div>
+                </div>
+              )}
 
               {CATEGORY_CONFIG[uc.category]?.showResolutionRate && (
                 <div className="form-group">
@@ -201,13 +254,15 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               {CATEGORY_CONFIG[uc.category]?.showHandlingTime && (
                 <div className="form-group">
                   {renderLabel("Full Agent Handling Time (mins)", uc.actualHandlingTime, "Normal human time to resolve end-to-end. Used for fully resolved savings.")}
-                  <input 
-                    type="number" 
-                    className="form-input no-print" 
-                    value={uc.actualHandlingTime} 
-                    onChange={(e) => updateUseCase(uc.id, 'actualHandlingTime', parseNumber(e.target.value))}
-                    step="any"
-                  />
+                  <div className="input-wrapper">
+                    <input 
+                      type="number" 
+                      className="form-input no-print" 
+                      value={uc.actualHandlingTime} 
+                      onChange={(e) => updateUseCase(uc.id, 'actualHandlingTime', parseNumber(e.target.value))}
+                      step="any"
+                    />
+                  </div>
                 </div>
               )}
 
@@ -233,26 +288,30 @@ export default function UseCaseManager({ useCases, setUseCases }) {
               {CATEGORY_CONFIG[uc.category]?.showTransferTime && (
                 <div className="form-group">
                   {renderLabel("Time to Transfer (mins)", uc.transferTime, "The average time a human agent spends answering and transferring a misrouted call.")}
-                  <input 
-                    type="number" 
-                    className="form-input no-print" 
-                    value={uc.transferTime} 
-                    onChange={(e) => updateUseCase(uc.id, 'transferTime', parseNumber(e.target.value))}
-                    step="any"
-                  />
+                  <div className="input-wrapper">
+                    <input 
+                      type="number" 
+                      className="form-input no-print" 
+                      value={uc.transferTime} 
+                      onChange={(e) => updateUseCase(uc.id, 'transferTime', parseNumber(e.target.value))}
+                      step="any"
+                    />
+                  </div>
                 </div>
               )}
 
               {CATEGORY_CONFIG[uc.category]?.showHandoverTime !== false && (
                 <div className="form-group">
                   {renderLabel("Time Saved on Handover (mins)", uc.handoverTimeSaved, "Time saved on interactions that were engaged but NOT fully resolved.")}
-                  <input 
-                    type="number" 
-                    className="form-input no-print" 
-                    value={uc.handoverTimeSaved} 
-                    onChange={(e) => updateUseCase(uc.id, 'handoverTimeSaved', parseNumber(e.target.value))}
-                    step="any"
-                  />
+                  <div className="input-wrapper">
+                    <input 
+                      type="number" 
+                      className="form-input no-print" 
+                      value={uc.handoverTimeSaved} 
+                      onChange={(e) => updateUseCase(uc.id, 'handoverTimeSaved', parseNumber(e.target.value))}
+                      step="any"
+                    />
+                  </div>
                 </div>
               )}
             </div>

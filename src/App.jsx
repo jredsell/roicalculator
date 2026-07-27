@@ -14,6 +14,10 @@ const DEFAULT_GLOBAL_SETTINGS = {
   includedAiUnits: 0, // units included per agent
   additionalBundleCost: 0, // Cost per bundle
   additionalBundleSize: 0, // Units per bundle
+  speechCostPer100Hours: 0, // Cost per 100 hours of speech
+  includedDigitalMessages: 0, // bundled per agent
+  additionalDigitalBundleCost: 0, // Cost per additional messages bundle
+  additionalDigitalBundleSize: 0, // Number of messages in additional bundle
   fteWeeklyHours: 37.5, // Hours
   fullyLoadedAgentCost: 30000 // Annual cost
 }
@@ -22,14 +26,17 @@ const DEFAULT_USE_CASE = {
   id: '1',
   name: 'Initial Triage',
   category: 'Triage',
+  channel: 'Voice',
   unitsPerInteraction: 15,
+  digitalMessagesPerInteraction: 5,
   totalInteractions: 5000,
   engagementRate: 100,
   resolutionRate: 0,
   actualHandlingTime: 3, // minutes
   handoverTimeSaved: 1, // minutes
   transferRate: 20,
-  transferTime: 2 // minutes
+  transferTime: 2, // minutes
+  aiTalkTime: 2 // minutes (probable AI talk time)
 }
 
 function App() {
@@ -69,6 +76,9 @@ function App() {
     let totalCurrentAgentCostMonthly = 0 // Cost of humans doing this work
     let totalHumanFteRequired = 0
     let totalFteSaved = 0
+    
+    let totalSpeechMinutes = 0
+    let totalDigitalMessages = 0
 
     // Working hours calculations
     // 37.5 hours/week * 52 weeks / 12 months = average monthly hours per FTE
@@ -82,6 +92,13 @@ function App() {
       
       // Units for this use case
       totalUnitsRequired += engagedInteractions * (uc.unitsPerInteraction || 0)
+      
+      // Calculate Speech / Digital Messages
+      if (uc.channel === 'Voice') {
+        totalSpeechMinutes += engagedInteractions * (uc.aiTalkTime || 0)
+      } else if (uc.channel === 'Digital') {
+        totalDigitalMessages += engagedInteractions * (uc.digitalMessagesPerInteraction || 0)
+      }
       
       // Time saved (minutes) per month
       let timeSaved = 0
@@ -115,7 +132,18 @@ function App() {
     const bundlesNeeded = Math.ceil(extraUnitsNeeded / bundleSize)
     const additionalBundlesCost = bundlesNeeded * (globalSettings.additionalBundleCost || 0)
     
-    const totalAiMonthlyCost = baseAiMonthlyCost + additionalBundlesCost
+    // Speech Cost
+    const totalSpeechHours = totalSpeechMinutes / 60
+    const speechCost = Math.ceil(totalSpeechHours) * ((globalSettings.speechCostPer100Hours || 0) / 100)
+    
+    // Digital Messages Cost
+    const totalIncludedDigitalMessages = (globalSettings.numberOfAgents || 0) * (globalSettings.includedDigitalMessages || 0)
+    const extraDigitalMessagesNeeded = Math.max(0, totalDigitalMessages - totalIncludedDigitalMessages)
+    const digitalBundleSize = globalSettings.additionalDigitalBundleSize || 1
+    const digitalBundlesNeeded = Math.ceil(extraDigitalMessagesNeeded / digitalBundleSize)
+    const additionalDigitalBundlesCost = digitalBundlesNeeded * (globalSettings.additionalDigitalBundleCost || 0)
+    
+    const totalAiMonthlyCost = baseAiMonthlyCost + additionalBundlesCost + speechCost + additionalDigitalBundlesCost
 
     // Base software cost without AI (just the agent licenses)
     const baseSoftwareCost = (globalSettings.numberOfAgents || 0) * (globalSettings.agentLicenseCost || 0)
@@ -133,6 +161,14 @@ function App() {
       totalIncludedUnits,
       extraUnitsNeeded,
       bundlesNeeded,
+      additionalBundlesCost,
+      totalSpeechHours,
+      speechCost,
+      totalDigitalMessages,
+      totalIncludedDigitalMessages,
+      extraDigitalMessagesNeeded,
+      digitalBundlesNeeded,
+      additionalDigitalBundlesCost,
       totalAiMonthlyCost,
       incrementalAiCost,
       baseSoftwareCost,
@@ -197,14 +233,17 @@ function App() {
     ];
     
     const useCasesData = [
-      ['Name', 'Category', 'Interactions/Mo', 'Engagement (%)', 'Resolution/Transfer (%)', 'Units/Interaction', 'Full/Transfer Time (mins)', 'Handover Time (mins)'],
+      ['Name', 'Category', 'Channel', 'Interactions/Mo', 'Engagement (%)', 'Resolution/Transfer (%)', 'Units/Interaction', 'Digital Msgs', 'AI Talk Time', 'Full/Transfer Time (mins)', 'Handover Time (mins)'],
       ...useCases.map(uc => [
         uc.name,
         uc.category,
+        uc.channel,
         uc.totalInteractions,
         uc.engagementRate,
         uc.category === 'Triage' ? uc.transferRate : uc.resolutionRate,
         uc.unitsPerInteraction,
+        uc.channel === 'Digital' ? uc.digitalMessagesPerInteraction : 0,
+        uc.channel === 'Voice' ? uc.aiTalkTime : 0,
         uc.category === 'Triage' ? uc.transferTime : uc.actualHandlingTime,
         uc.category === 'Triage' ? 0 : uc.handoverTimeSaved
       ])
@@ -253,10 +292,13 @@ function App() {
     wsUseCases['!cols'] = [
       { wch: 25 }, // Name
       { wch: 20 }, // Category
+      { wch: 15 }, // Channel
       { wch: 15 }, // Interactions/Mo
       { wch: 15 }, // Engagement (%)
       { wch: 25 }, // Resolution/Transfer (%)
       { wch: 15 }, // Units/Interaction
+      { wch: 15 }, // Digital Msgs
+      { wch: 15 }, // AI Talk Time
       { wch: 25 }, // Full/Transfer Time (mins)
       { wch: 25 }  // Handover Time (mins)
     ];

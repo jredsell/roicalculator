@@ -186,6 +186,9 @@ h1 {
 /* Form Elements */
 .form-group {
   margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .form-label {
@@ -200,6 +203,7 @@ h1 {
   position: relative;
   display: flex;
   align-items: center;
+  margin-top: auto;
 }
 
 .input-icon {
@@ -238,6 +242,7 @@ h1 {
 .form-select {
   width: 100%;
   background: var(--input-bg);
+  margin-top: auto;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 0.625rem 0.75rem;
