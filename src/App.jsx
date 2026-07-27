@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from 'react'
-import { Calculator, Download, Plus, Settings, BarChart3, Printer, HelpCircle, Sun, Moon } from 'lucide-react'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import { Calculator, Download, Plus, Settings, BarChart3, Printer, HelpCircle, Sun, Moon, Upload, Save, RotateCcw } from 'lucide-react'
 import * as XLSX from 'xlsx'
 
 import GlobalSettings from './components/GlobalSettings'
@@ -33,11 +33,26 @@ const DEFAULT_USE_CASE = {
 }
 
 function App() {
-  const [globalSettings, setGlobalSettings] = useState(DEFAULT_GLOBAL_SETTINGS)
-  const [useCases, setUseCases] = useState([DEFAULT_USE_CASE])
+  const [globalSettings, setGlobalSettings] = useState(() => {
+    const saved = localStorage.getItem('roiGlobalSettings')
+    return saved ? JSON.parse(saved) : DEFAULT_GLOBAL_SETTINGS
+  })
+  const [useCases, setUseCases] = useState(() => {
+    const saved = localStorage.getItem('roiUseCases')
+    return saved ? JSON.parse(saved) : [DEFAULT_USE_CASE]
+  })
   const [activeTab, setActiveTab] = useState('calculator') // 'calculator', 'settings'
   const [isHelpOpen, setIsHelpOpen] = useState(false)
   const [theme, setTheme] = useState('light')
+  const fileInputRef = useRef(null)
+
+  useEffect(() => {
+    localStorage.setItem('roiGlobalSettings', JSON.stringify(globalSettings))
+  }, [globalSettings])
+
+  useEffect(() => {
+    localStorage.setItem('roiUseCases', JSON.stringify(useCases))
+  }, [useCases])
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -131,6 +146,42 @@ function App() {
       paybackMonths
     }
   }, [globalSettings, useCases])
+
+  const exportJson = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ globalSettings, useCases }, null, 2))
+    const downloadAnchorNode = document.createElement('a')
+    downloadAnchorNode.setAttribute("href", dataStr)
+    downloadAnchorNode.setAttribute("download", "roi_calculator_config.json")
+    document.body.appendChild(downloadAnchorNode)
+    downloadAnchorNode.click()
+    downloadAnchorNode.remove()
+  }
+
+  const importJson = (event) => {
+    const file = event.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result)
+        if (data.globalSettings) setGlobalSettings(data.globalSettings)
+        if (data.useCases) setUseCases(data.useCases)
+      } catch (error) {
+        alert("Error parsing JSON file")
+      }
+    }
+    reader.readAsText(file)
+    event.target.value = null
+  }
+
+  const resetData = () => {
+    if (window.confirm("Are you sure you want to clear all data and reset to defaults?")) {
+      setGlobalSettings(DEFAULT_GLOBAL_SETTINGS)
+      setUseCases([DEFAULT_USE_CASE])
+      localStorage.removeItem('roiGlobalSettings')
+      localStorage.removeItem('roiUseCases')
+    }
+  }
 
   const exportExcel = () => {
     const settingsData = [
@@ -253,6 +304,38 @@ function App() {
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
+          
+          <button 
+            className="btn btn-secondary no-print btn-icon"
+            onClick={resetData}
+            title="Reset to Defaults"
+          >
+            <RotateCcw size={18} />
+          </button>
+          
+          <button 
+            className="btn btn-secondary no-print btn-icon"
+            onClick={exportJson}
+            title="Export JSON Config"
+          >
+            <Save size={18} />
+          </button>
+          
+          <button 
+            className="btn btn-secondary no-print btn-icon"
+            onClick={() => fileInputRef.current?.click()}
+            title="Import JSON Config"
+          >
+            <Upload size={18} />
+          </button>
+          <input 
+            type="file" 
+            accept=".json" 
+            style={{ display: 'none' }} 
+            ref={fileInputRef}
+            onChange={importJson}
+          />
+
           <button 
             className="btn btn-secondary no-print" 
             onClick={() => setIsHelpOpen(true)}
