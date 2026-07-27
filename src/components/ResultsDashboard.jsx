@@ -186,7 +186,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
             <div className="metric-subtext">Base licenses ({globalSettings.numberOfAgents} agents)</div>
           </div>
           <div className="metric-card">
-            <div className="metric-label">Extra Bundles Needed</div>
+            <div className="metric-label">Extra AI Unit Bundles</div>
             <div className="metric-value">{results.bundlesNeeded}</div>
             <div className="metric-subtext">
               Cost: {formatCurrency(results.additionalBundlesCost)} / mo
@@ -216,7 +216,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
               <span className="font-medium">{formatNumber(results.totalDigitalMessages)} / {formatNumber(results.totalIncludedDigitalMessages)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span className="text-secondary">Extra Bundles Needed:</span>
+              <span className="text-secondary">Extra Msg Bundles:</span>
               <span className="font-medium">{results.digitalBundlesNeeded}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem' }}>

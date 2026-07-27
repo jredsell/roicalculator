@@ -225,8 +225,12 @@ function App() {
       ['Agent License Cost (£/month)', globalSettings.agentLicenseCost],
       ['AI Enablement Cost (£/agent/month)', globalSettings.aiEnablementCost],
       ['Included AI Units (per agent/month)', globalSettings.includedAiUnits],
-      ['Additional Bundle Cost (£)', globalSettings.additionalBundleCost],
-      ['Additional Bundle Size (Units)', globalSettings.additionalBundleSize],
+      ['AI Unit Bundle Cost (£)', globalSettings.additionalBundleCost],
+      ['AI Unit Bundle Size', globalSettings.additionalBundleSize],
+      ['Speech Cost per 100 Hours (£)', globalSettings.speechCostPer100Hours],
+      ['Bundled Digital Messages (per agent/month)', globalSettings.includedDigitalMessages],
+      ['Digital Msg Bundle Cost (£)', globalSettings.additionalDigitalBundleCost],
+      ['Digital Msg Bundle Size', globalSettings.additionalDigitalBundleSize],
       ['FTE Weekly Working Hours', globalSettings.fteWeeklyHours],
       ['FTE Yearly Cost (£)', globalSettings.fullyLoadedAgentCost],
     ];
@@ -253,7 +257,14 @@ function App() {
       ['Total Units Required/Mo', results.totalUnitsRequired],
       ['Included Units', results.totalIncludedUnits],
       ['Extra Units Needed', results.extraUnitsNeeded],
-      ['Bundles Needed', results.bundlesNeeded],
+      ['AI Unit Bundles Needed', results.bundlesNeeded],
+      ['Total Speech Required (Hours/Mo)', results.totalSpeechHours],
+      ['Speech Cost (£/Mo)', results.speechCost],
+      ['Total Digital Msgs Required/Mo', results.totalDigitalMessages],
+      ['Included Digital Msgs', results.totalIncludedDigitalMessages],
+      ['Extra Digital Msgs Needed', results.extraDigitalMessagesNeeded],
+      ['Digital Msg Bundles Needed', results.digitalBundlesNeeded],
+      ['Extra Digital Msgs Cost (£/Mo)', results.additionalDigitalBundlesCost],
       ['Total AI Monthly Cost (£)', results.totalAiMonthlyCost],
       ['Base Software Cost (£)', results.baseSoftwareCost],
       ['Total Time Saved (Hours/Mo)', results.totalTimeSavedHours],
@@ -317,7 +328,14 @@ function App() {
       'B10': '£#,##0.00',
       'B11': '£#,##0.00',
       'B12': '£#,##0.00',
-      'B13': '#,##0.0"%"'
+      'B13': '#,##0',
+      'B14': '#,##0',
+      'B15': '#,##0',
+      'B16': '#,##0',
+      'B17': '£#,##0.00',
+      'B18': '£#,##0.00',
+      'B19': '£#,##0.00',
+      'B20': '#,##0.0"%"'
     });
     XLSX.utils.book_append_sheet(wb, wsResults, "Results Summary");
     
@@ -466,7 +484,7 @@ function App() {
                   <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Agent License Cost</th>
                   <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>AI Enablement Cost</th>
                   <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Included Units/Agent</th>
-                  <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Bundle (Units/Cost)</th>
+                  <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>AI Unit Bundle (Units/Cost)</th>
                   <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>FTE Weekly Hours</th>
                   <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>FTE Yearly Cost</th>
                   <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Total Agents</th>
