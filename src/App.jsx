@@ -74,7 +74,6 @@ function App() {
     let totalUnitsRequired = 0
     let totalTimeSavedMinutes = 0
     let totalCurrentAgentCostMonthly = 0 // Cost of humans doing this work
-    let totalHumanFteRequired = 0
     let totalFteSaved = 0
     
     let totalSpeechMinutes = 0

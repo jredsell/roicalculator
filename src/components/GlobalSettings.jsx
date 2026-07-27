@@ -12,10 +12,13 @@ export default function GlobalSettings({ settings, setSettings }) {
     }))
   }
 
-  const renderLabel = (text, name) => (
-    <label className={`form-label ${settings[name] === '' ? 'text-danger' : ''}`}>
-      {text} {settings[name] === '' && '*'}
-    </label>
+  const renderLabel = (text, name, description) => (
+    <div style={{ marginBottom: '0.25rem' }}>
+      <label className={`form-label ${settings[name] === '' ? 'text-danger' : ''}`} style={{ marginBottom: '0.125rem' }}>
+        {text} {settings[name] === '' && '*'}
+      </label>
+      {description && <div className="text-secondary" style={{ fontSize: '0.75rem', lineHeight: 1.2 }}>{description}</div>}
+    </div>
   )
 
   return (
@@ -160,7 +163,7 @@ export default function GlobalSettings({ settings, setSettings }) {
         </div>
 
         <div className="form-group">
-          {renderLabel("FTE Weekly Working Hours", "fteWeeklyHours")}
+          {renderLabel("FTE Weekly Working Hours", "fteWeeklyHours", "Used to calculate FTE savings from time saved.")}
           <div className="input-wrapper">
             <input 
               type="number" 
@@ -170,11 +173,10 @@ export default function GlobalSettings({ settings, setSettings }) {
               onChange={handleChange}
             />
           </div>
-          <p className="metric-subtext mt-4">Used to calculate FTE savings from time saved.</p>
         </div>
 
         <div className="form-group">
-          {renderLabel("FTE Yearly Cost (£)", "fullyLoadedAgentCost")}
+          {renderLabel("FTE Yearly Cost (£)", "fullyLoadedAgentCost", "Average annual cost including salary, taxes, benefits, and overhead.")}
           <div className="input-wrapper">
             <span className="input-icon">£</span>
             <input 
@@ -185,7 +187,6 @@ export default function GlobalSettings({ settings, setSettings }) {
               onChange={handleChange}
             />
           </div>
-          <p className="metric-subtext mt-4">Average annual cost including salary, taxes, benefits, and overhead.</p>
         </div>
       </div>
     </div>
