@@ -627,15 +627,15 @@ h1 {
     margin: 0;
   }
 
-  .card, .metric-card, .chart-wrapper {
-    background: white;
+  .card, .metric-card, .chart-wrapper, .cost-breakdown-card, .cost-summary-card {
+    background: white !important;
     border: 1px solid #e2e8f0;
     box-shadow: none !important;
     color: black;
     break-inside: avoid;
   }
   
-  .text-primary, h1, h2, h3, .metric-value, .card-title {
+  .text-primary, h1, h2, h3, h4, .metric-value, .card-title {
     color: black !important;
   }
   

@@ -171,63 +171,74 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
       <div className="card">
         <div className="flex items-center gap-2 mb-4">
           <Zap size={20} className="text-primary" />
-          <h3 style={{ margin: 0 }}>AI Unit Consumption & Costs</h3>
+          <h3 style={{ margin: 0 }}>Consumption & Costs Breakdown</h3>
         </div>
         
         <div className="grid-3 mb-4">
-          <div className="metric-card">
-            <div className="metric-label">Total Units Required</div>
-            <div className="metric-value">{formatNumber(results.totalUnitsRequired)}</div>
-            <div className="metric-subtext">per month</div>
-          </div>
-          <div className="metric-card">
-            <div className="metric-label">Included Units</div>
-            <div className="metric-value">{formatNumber(results.totalIncludedUnits)}</div>
-            <div className="metric-subtext">Base licenses ({globalSettings.numberOfAgents} agents)</div>
-          </div>
-          <div className="metric-card">
-            <div className="metric-label">Extra AI Unit Bundles</div>
-            <div className="metric-value">{results.bundlesNeeded}</div>
-            <div className="metric-subtext">
-              Cost: {formatCurrency(results.additionalBundlesCost)} / mo
-            </div>
-          </div>
-        </div>
-        
-        <div className="grid-2 mb-4">
-          {/* Speech Section */}
-          <div style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
-            <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1rem' }}>Voice / Speech Cost</h4>
+          {/* AI Section */}
+          <div className="cost-breakdown-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column' }}>
+            <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1rem' }}>AI Units</h4>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span className="text-secondary">Speech Required:</span>
-              <span className="font-medium">{formatNumber(results.totalSpeechHours)} hours</span>
+              <span className="text-secondary">Total Required:</span>
+              <span className="font-medium">{formatNumber(results.totalUnitsRequired)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem' }}>
-              <span className="text-secondary">Speech Cost:</span>
-              <span className="font-medium text-primary">{formatCurrency(results.speechCost)}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <span className="text-secondary">Included:</span>
+              <span className="font-medium">{formatNumber(results.totalIncludedUnits)}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <span className="text-secondary">Extra Bundles:</span>
+              <span className="font-medium">{formatNumber(results.bundlesNeeded)}</span>
+            </div>
+            <div style={{ marginTop: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem' }}>
+                <span className="text-secondary">Extra Cost:</span>
+                <span className="font-medium text-primary">{formatCurrency(results.additionalBundlesCost)}</span>
+              </div>
             </div>
           </div>
 
           {/* Digital Messages Section */}
-          <div style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
-            <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1rem' }}>Digital Messages Cost</h4>
+          <div className="cost-breakdown-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column' }}>
+            <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1rem' }}>Digital Messages</h4>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span className="text-secondary">Msgs Required / Included:</span>
-              <span className="font-medium">{formatNumber(results.totalDigitalMessages)} / {formatNumber(results.totalIncludedDigitalMessages)}</span>
+              <span className="text-secondary">Total Required:</span>
+              <span className="font-medium">{formatNumber(results.totalDigitalMessages)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span className="text-secondary">Extra Msg Bundles:</span>
-              <span className="font-medium">{results.digitalBundlesNeeded}</span>
+              <span className="text-secondary">Included:</span>
+              <span className="font-medium">{formatNumber(results.totalIncludedDigitalMessages)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem' }}>
-              <span className="text-secondary">Extra Msgs Cost:</span>
-              <span className="font-medium text-primary">{formatCurrency(results.additionalDigitalBundlesCost)}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <span className="text-secondary">Extra Bundles:</span>
+              <span className="font-medium">{formatNumber(results.digitalBundlesNeeded)}</span>
+            </div>
+            <div style={{ marginTop: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem' }}>
+                <span className="text-secondary">Extra Cost:</span>
+                <span className="font-medium text-primary">{formatCurrency(results.additionalDigitalBundlesCost)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Speech Section */}
+          <div className="cost-breakdown-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column' }}>
+            <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1rem' }}>Voice / Speech</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <span className="text-secondary">Required:</span>
+              <span className="font-medium">{formatNumber(results.totalSpeechHours)} hours</span>
+            </div>
+            <div style={{ marginTop: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem' }}>
+                <span className="text-secondary">Cost:</span>
+                <span className="font-medium text-primary">{formatCurrency(results.speechCost)}</span>
+              </div>
             </div>
           </div>
         </div>
         
-        <div className="flex justify-between items-center p-4" style={{ background: 'var(--btn-secondary-bg)', borderRadius: 'var(--radius-md)' }}>
-          <span className="font-medium text-secondary">Total Monthly Software Cost (Base + AI)</span>
+        <div className="cost-summary-card flex justify-between items-center p-4" style={{ background: 'var(--btn-secondary-bg)', borderRadius: 'var(--radius-md)' }}>
+          <span className="font-medium text-secondary">Total Monthly Software Costs</span>
           <span className="metric-value" style={{ fontSize: '1.5rem' }}>{formatCurrency(results.totalAiMonthlyCost)}</span>
         </div>
       </div>
