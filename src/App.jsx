@@ -131,9 +131,10 @@ function App() {
     const bundlesNeeded = Math.ceil(extraUnitsNeeded / bundleSize)
     const additionalBundlesCost = bundlesNeeded * (globalSettings.additionalBundleCost || 0)
     
-    // Speech Cost
+    // Speech Cost (Purchased in blocks of 100 hours)
     const totalSpeechHours = totalSpeechMinutes / 60
-    const speechCost = Math.ceil(totalSpeechHours) * ((globalSettings.speechCostPer100Hours || 0) / 100)
+    const speechBlocksNeeded = Math.ceil(totalSpeechHours / 100)
+    const speechCost = speechBlocksNeeded * (globalSettings.speechCostPer100Hours || 0)
     
     // Digital Messages Cost
     const totalIncludedDigitalMessages = (globalSettings.numberOfAgents || 0) * (globalSettings.includedDigitalMessages || 0)
