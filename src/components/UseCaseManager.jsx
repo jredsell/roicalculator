@@ -6,6 +6,7 @@ const CATEGORIES = ['Triage', 'General Enquiries', 'Transactional', 'Data Collec
 const CATEGORY_CONFIG = {
   'Triage': {
     description: "Calculates the time saved by having the AI correctly route customers, eliminating the time human agents spend answering and then transferring calls that went to the wrong area.",
+    defaultUnits: 15,
     showResolutionRate: false,
     showHandlingTime: false,
     showHandoverTime: false,
@@ -14,18 +15,21 @@ const CATEGORY_CONFIG = {
   },
   'Data Collection': {
     description: "Calculates time saved when the AI collects required forms, details, or verifications before passing the conversation to an agent.",
+    defaultUnits: 20,
     showResolutionRate: false,
     showHandlingTime: false,
     showHandoverTime: true,
   },
   'General Enquiries': {
     description: "Calculates the value of the AI fully resolving common questions without human intervention, plus time saved on interactions it attempts but has to hand over.",
+    defaultUnits: 30,
     showResolutionRate: true,
     showHandlingTime: true,
     showHandoverTime: true,
   },
   'Transactional': {
     description: "Calculates the ROI of the AI automating end-to-end processes (like booking appointments, password resets, or taking payments).",
+    defaultUnits: 50,
     showResolutionRate: true,
     showHandlingTime: true,
     showHandoverTime: true,
@@ -39,7 +43,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
       id: newId,
       name: 'New Use Case',
       category: 'General Enquiries',
-      unitsPerInteraction: 0,
+      unitsPerInteraction: 30,
       totalInteractions: 1000,
       engagementRate: 100,
       resolutionRate: 50,
@@ -60,8 +64,11 @@ export default function UseCaseManager({ useCases, setUseCases }) {
         const updatedUc = { ...uc, [field]: value }
         if (field === 'category') {
           const config = CATEGORY_CONFIG[value]
-          if (config && !config.showResolutionRate) {
-            updatedUc.resolutionRate = 0
+          if (config) {
+            if (!config.showResolutionRate) {
+              updatedUc.resolutionRate = 0
+            }
+            updatedUc.unitsPerInteraction = config.defaultUnits
           }
         }
         return updatedUc

@@ -22,7 +22,7 @@ const DEFAULT_USE_CASE = {
   id: '1',
   name: 'Initial Triage',
   category: 'Triage',
-  unitsPerInteraction: 0,
+  unitsPerInteraction: 15,
   totalInteractions: 5000,
   engagementRate: 100,
   resolutionRate: 0,
