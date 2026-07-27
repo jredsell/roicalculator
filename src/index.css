@@ -142,14 +142,18 @@ h1 {
 
 .header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  gap: 1.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--border-color);
 }
 
 .header-actions {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1rem;
 }
 

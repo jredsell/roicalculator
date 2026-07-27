@@ -286,14 +286,14 @@ function App() {
   return (
     <div className="app-container">
       <header className="header no-print">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', padding: '0.75rem', borderRadius: 'var(--radius-lg)' }}>
-            <Calculator size={28} color="white" />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', textAlign: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', padding: '0.5rem', borderRadius: 'var(--radius-lg)' }}>
+              <Calculator size={24} color="white" />
+            </div>
+            <h1 style={{ margin: 0, fontSize: '2rem' }}>AI Contact Centre ROI</h1>
           </div>
-          <div>
-            <h1>AI Contact Centre ROI</h1>
-            <p className="text-secondary">Calculate the value of your Virtual Agent automation</p>
-          </div>
+          <p className="text-secondary" style={{ margin: 0 }}>Calculate the value of your Virtual Agent automation</p>
         </div>
         
         <div className="header-actions">
