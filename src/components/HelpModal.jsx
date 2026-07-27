@@ -108,45 +108,56 @@ export default function HelpModal({ isOpen, onClose }) {
               </p>
               
               <h4 style={{ color: 'var(--accent-secondary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>1. Use Case Categories</h4>
-              <div style={{ display: 'grid', gap: '1rem', marginBottom: '2rem' }}>
-                <div className="use-case-card p-3" style={{ background: 'var(--btn-secondary-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>Triage:</strong> AI acts as the first point of contact to understand intent and route to the correct human. It doesn't solve the problem, but saves the human from doing initial preamble.
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Triage</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>AI acts as the first point of contact to understand intent and route to the correct human. It doesn't solve the problem, but saves the human from doing initial preamble.</p>
                 </div>
-                <div className="use-case-card p-3" style={{ background: 'var(--btn-secondary-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>Data Collection:</strong> AI intercepts the conversation to gather necessary info (e.g. account numbers, identity verification) <em>before</em> handing over to a human.
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Data Collection</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>AI intercepts the conversation to gather necessary info (e.g. account numbers, identity verification) <em>before</em> handing over to a human.</p>
                 </div>
-                <div className="use-case-card p-3" style={{ background: 'var(--btn-secondary-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>General Enquiries:</strong> AI fully resolves common, informational questions by leveraging a knowledge base (FAQs) without human intervention.
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>General Enquiries</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>AI fully resolves common, informational questions by leveraging a knowledge base (FAQs) without human intervention.</p>
                 </div>
-                <div className="use-case-card p-3" style={{ background: 'var(--btn-secondary-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>Transactional:</strong> Highest-value automation. AI integrates with backend systems to complete an end-to-end process (e.g. taking payments, resetting passwords).
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Transactional</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Highest-value automation. AI integrates with backend systems to complete an end-to-end process (e.g. taking payments, resetting passwords).</p>
                 </div>
               </div>
 
               <h4 style={{ color: 'var(--accent-secondary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>2. Calculator Fields</h4>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <li>
-                  <strong style={{ color: 'var(--text-primary)' }}>Category:</strong> Choose the type of interaction. This determines which fields apply (e.g., Triage doesn't calculate Full Resolution).
-                </li>
-                <li>
-                  <strong style={{ color: 'var(--text-primary)' }}>Total Monthly Interactions:</strong> The overall baseline volume for this specific scenario every month.
-                </li>
-                <li>
-                  <strong style={{ color: 'var(--text-primary)' }}>AI Engagement Rate (%):</strong> The percentage of total interactions that the AI will actually intercept and attempt to process.
-                </li>
-                <li>
-                  <strong style={{ color: 'var(--text-primary)' }}>Units per Interaction:</strong> The amount of AI units consumed each time the AI engages with this scenario (affects AI software cost).
-                </li>
-                <li>
-                  <strong style={{ color: 'var(--text-primary)' }}>Full Resolution Rate (%):</strong> <em>(Enquiries/Transactional only)</em> The percentage of engaged interactions the AI fully solves without any human help.
-                </li>
-                <li>
-                  <strong style={{ color: 'var(--text-primary)' }}>Full Agent Handling Time (mins):</strong> <em>(Enquiries/Transactional only)</em> The average time it takes a human to completely resolve this scenario end-to-end.
-                </li>
-                <li>
-                  <strong style={{ color: 'var(--text-primary)' }}>Time Saved on Handover (mins):</strong> The average human time saved when the AI intercepts, collects some info, but ultimately has to hand over to a human to finish.
-                </li>
-              </ul>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Category</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Choose the type of interaction. This determines which fields apply (e.g., Triage doesn't calculate Full Resolution).</p>
+                </div>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Total Monthly Interactions</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The overall baseline volume for this specific scenario every month.</p>
+                </div>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>AI Engagement Rate (%)</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The percentage of total interactions that the AI will actually intercept and attempt to process.</p>
+                </div>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Units per Interaction</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The amount of AI units consumed each time the AI engages with this scenario (affects AI software cost).</p>
+                </div>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Full Resolution Rate (%)</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}><em>(Enquiries/Transactional only)</em> The percentage of engaged interactions the AI fully solves without any human help.</p>
+                </div>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Full Agent Handling Time (mins)</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}><em>(Enquiries/Transactional only)</em> The average time it takes a human to completely resolve this scenario end-to-end.</p>
+                </div>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Time Saved on Handover (mins)</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The average human time saved when the AI intercepts, collects some info, but ultimately has to hand over to a human to finish.</p>
+                </div>
+              </div>
             </div>
           )}
 
@@ -155,36 +166,39 @@ export default function HelpModal({ isOpen, onClose }) {
               <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>How the Math Works (100% Transparency)</h3>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>The calculator uses standard financial modeling to convert raw minutes into monetary savings.</p>
               
-              <ul className="math-list" style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                <li>
-                  <strong style={{ color: 'var(--accent-primary)', fontSize: '1.1rem' }}>Gross Time Saved</strong> <br/>
-                  <code style={{ background: 'var(--input-bg)', padding: '0.25rem 0.5rem', borderRadius: '4px', display: 'inline-block', margin: '0.5rem 0', color: 'var(--text-primary)' }}>
-                    (Fully Resolved Interactions × Full Handling Time) + (Handover Interactions × Handover Time Saved)
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem' }}>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>Gross Time Saved</h4>
+                  <code style={{ background: 'var(--bg-color)', padding: '0.5rem', borderRadius: '6px', display: 'block', margin: '0.75rem 0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
+                    (Fully Resolved × Full Time) + (Handover × Handover Time)
                   </code>
-                  <p className="text-secondary mt-1" style={{ margin: 0 }}>Calculates the total human minutes avoided each month across all use cases.</p>
-                </li>
-                <li>
-                  <strong style={{ color: 'var(--accent-primary)', fontSize: '1.1rem' }}>FTEs Saved</strong> <br/>
-                  <code style={{ background: 'var(--input-bg)', padding: '0.25rem 0.5rem', borderRadius: '4px', display: 'inline-block', margin: '0.5rem 0', color: 'var(--text-primary)' }}>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Calculates the total human minutes avoided each month across all use cases.</p>
+                </div>
+                
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>FTEs Saved</h4>
+                  <code style={{ background: 'var(--bg-color)', padding: '0.5rem', borderRadius: '6px', display: 'block', margin: '0.75rem 0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
                     Total Time Saved / Average Monthly Minutes per FTE
                   </code>
-                  <p className="text-secondary mt-1" style={{ margin: 0 }}>Converts total minutes saved into Full-Time Equivalents (based on the FTE Weekly Hours setting).</p>
-                </li>
-                <li>
-                  <strong style={{ color: 'var(--accent-primary)', fontSize: '1.1rem' }}>Gross Financial Savings (£)</strong> <br/>
-                  <code style={{ background: 'var(--input-bg)', padding: '0.25rem 0.5rem', borderRadius: '4px', display: 'inline-block', margin: '0.5rem 0', color: 'var(--text-primary)' }}>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Converts total minutes saved into Full-Time Equivalents based on weekly hours.</p>
+                </div>
+
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>Gross Financial Savings (£)</h4>
+                  <code style={{ background: 'var(--bg-color)', padding: '0.5rem', borderRadius: '6px', display: 'block', margin: '0.75rem 0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
                     FTEs Saved × (Fully Loaded Annual Agent Cost / 12)
                   </code>
-                  <p className="text-secondary mt-1" style={{ margin: 0 }}>Converts the saved human capacity into monthly financial value.</p>
-                </li>
-                <li>
-                  <strong style={{ color: 'var(--accent-primary)', fontSize: '1.1rem' }}>Incremental AI Cost (£)</strong> <br/>
-                  <code style={{ background: 'var(--input-bg)', padding: '0.25rem 0.5rem', borderRadius: '4px', display: 'inline-block', margin: '0.5rem 0', color: 'var(--text-primary)' }}>
-                    (Total Agents × AI Enablement Cost) + Extra AI Bundles Cost
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Converts the saved human capacity into a monthly financial value.</p>
+                </div>
+
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>Incremental AI Cost (£)</h4>
+                  <code style={{ background: 'var(--bg-color)', padding: '0.5rem', borderRadius: '6px', display: 'block', margin: '0.75rem 0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
+                    (Agents × AI Enablement Cost) + Extra AI Bundles Cost
                   </code>
-                  <p className="text-secondary mt-1" style={{ margin: 0 }}>The extra software cost incurred specifically to run the AI, above standard human agent licenses.</p>
-                </li>
-              </ul>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The software cost incurred specifically to run the AI, above standard licenses.</p>
+                </div>
+              </div>
             </div>
           )}
 
@@ -193,24 +207,40 @@ export default function HelpModal({ isOpen, onClose }) {
               <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>Interpreting the Results Dashboard</h3>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Understanding the final metrics to present your business case with confidence.</p>
 
-              <div className="result-card mb-4 p-4" style={{ background: 'var(--success-alpha)', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--accent-success)' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-success)' }}>Projected Net Savings</h4>
-                <p style={{ margin: 0 }}>This is the bottom-line financial value. It equals the <strong>Gross Financial Savings</strong> minus the <strong>Incremental AI Cost</strong>. If this number is positive, the AI generates more value in saved human capacity than it costs to operate.</p>
-              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                <div className="result-card" style={{ background: 'var(--success-alpha)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderTop: '4px solid var(--accent-success)', borderLeft: '1px solid var(--border-color)', borderRight: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-success)' }}>Projected Net Savings</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    Bottom-line financial value. Equals <strong>Gross Savings</strong> minus <strong>AI Cost</strong>. If positive, the AI generates more value in human capacity than it costs to operate.
+                  </p>
+                </div>
 
-              <div className="result-card mb-4 p-4" style={{ background: 'var(--secondary-alpha)', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--accent-secondary)' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-secondary)' }}>Human Capacity Freed (FTEs)</h4>
-                <p style={{ margin: 0 }}>The number of Full-Time Equivalents whose time has been completely freed up. These agents are not necessarily replaced; they can be repurposed to handle higher-value, complex tasks that AI cannot handle.</p>
-              </div>
+                <div className="result-card" style={{ background: 'var(--secondary-alpha)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderTop: '4px solid var(--accent-secondary)', borderLeft: '1px solid var(--border-color)', borderRight: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-secondary)' }}>Human Capacity Freed (FTEs)</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    The number of Full-Time Equivalents fully freed up. They aren't necessarily replaced, but can be repurposed for higher-value, complex tasks.
+                  </p>
+                </div>
 
-              <div className="result-card mb-4 p-4" style={{ background: 'var(--primary-alpha)', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--accent-primary)' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)' }}>Estimated ROI (%)</h4>
-                <p style={{ margin: 0 }}>Calculated as <code>(Net Monthly Savings / Incremental AI Cost) × 100</code>. An ROI of 100% means the AI pays for itself and generates an equal amount of profit on top.</p>
-              </div>
+                <div className="result-card" style={{ background: 'var(--primary-alpha)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderTop: '4px solid var(--accent-primary)', borderLeft: '1px solid var(--border-color)', borderRight: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)' }}>Estimated ROI (%)</h4>
+                  <code style={{ background: 'var(--bg-color)', padding: '0.25rem 0.5rem', borderRadius: '4px', display: 'inline-block', margin: '0.5rem 0', fontSize: '0.8rem', color: 'var(--text-primary)' }}>
+                    (Net Monthly Savings / Incremental AI Cost) × 100
+                  </code>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    An ROI of 100% means the AI pays for itself and generates an equal amount of profit on top.
+                  </p>
+                </div>
 
-              <div className="result-card p-4" style={{ background: 'var(--btn-secondary-bg)', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--text-muted)' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-secondary)' }}>Payback Period (Months)</h4>
-                <p style={{ margin: 0 }}>If you were to pay the <strong>Annual</strong> AI software cost upfront, this tells you how many months of human savings it takes to break even on that investment. Calculated as <code>(Incremental Monthly AI Cost × 12) / Gross Monthly Financial Savings</code>.</p>
+                <div className="result-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderTop: '4px solid var(--text-muted)', borderLeft: '1px solid var(--border-color)', borderRight: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-secondary)' }}>Payback Period (Months)</h4>
+                  <code style={{ background: 'var(--bg-color)', padding: '0.25rem 0.5rem', borderRadius: '4px', display: 'inline-block', margin: '0.5rem 0', fontSize: '0.8rem', color: 'var(--text-primary)' }}>
+                    (Monthly AI Cost × 12) / Gross Monthly Savings
+                  </code>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    If paying the annual AI cost upfront, this is how many months of human savings it takes to break even on that investment.
+                  </p>
+                </div>
               </div>
             </div>
           )}
