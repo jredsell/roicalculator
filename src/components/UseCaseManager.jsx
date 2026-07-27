@@ -5,24 +5,30 @@ const CATEGORIES = ['Triage', 'General Enquiries', 'Transactional', 'Data Collec
 
 const CATEGORY_CONFIG = {
   'Triage': {
-    description: "Calculates the time saved by having the AI gather initial information and route the customer. The AI doesn't resolve the query, but reduces the time the human agent spends on preamble.",
+    description: "Calculates the time saved by having the AI correctly route customers, eliminating the time human agents spend answering and then transferring calls that went to the wrong area.",
     showResolutionRate: false,
     showHandlingTime: false,
+    showHandoverTime: false,
+    showTransferRate: true,
+    showTransferTime: true,
   },
   'Data Collection': {
     description: "Calculates time saved when the AI collects required forms, details, or verifications before passing the conversation to an agent.",
     showResolutionRate: false,
     showHandlingTime: false,
+    showHandoverTime: true,
   },
   'General Enquiries': {
     description: "Calculates the value of the AI fully resolving common questions without human intervention, plus time saved on interactions it attempts but has to hand over.",
     showResolutionRate: true,
     showHandlingTime: true,
+    showHandoverTime: true,
   },
   'Transactional': {
     description: "Calculates the ROI of the AI automating end-to-end processes (like booking appointments, password resets, or taking payments).",
     showResolutionRate: true,
     showHandlingTime: true,
+    showHandoverTime: true,
   }
 }
 
@@ -38,7 +44,9 @@ export default function UseCaseManager({ useCases, setUseCases }) {
       engagementRate: 100,
       resolutionRate: 50,
       actualHandlingTime: 5,
-      handoverTimeSaved: 1.5
+      handoverTimeSaved: 1.5,
+      transferRate: 20,
+      transferTime: 2
     }, ...useCases])
   }
 
@@ -196,16 +204,50 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                 </div>
               )}
 
-              <div className="form-group">
-                {renderLabel("Time Saved on Handover (mins)", uc.handoverTimeSaved, "Time saved on interactions that were engaged but NOT fully resolved.")}
-                <input 
-                  type="number" 
-                  className="form-input no-print" 
-                  value={uc.handoverTimeSaved} 
-                  onChange={(e) => updateUseCase(uc.id, 'handoverTimeSaved', parseNumber(e.target.value))}
-                  step="any"
-                />
-              </div>
+              {CATEGORY_CONFIG[uc.category]?.showTransferRate && (
+                <div className="form-group">
+                  {renderLabel("% of Transferred Calls", uc.transferRate, "The percentage of calls currently going to the wrong area that the AI will now route correctly.")}
+                  <div className="input-wrapper">
+                    <input 
+                      type="number" 
+                      className="form-input no-print" 
+                      value={uc.transferRate} 
+                      onChange={(e) => {
+                        let val = parseNumber(e.target.value);
+                        if (val !== '') val = Math.max(0, Math.min(100, val));
+                        updateUseCase(uc.id, 'transferRate', val);
+                      }}
+                      max="100" min="0"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {CATEGORY_CONFIG[uc.category]?.showTransferTime && (
+                <div className="form-group">
+                  {renderLabel("Time to Transfer (mins)", uc.transferTime, "The average time a human agent spends answering and transferring a misrouted call.")}
+                  <input 
+                    type="number" 
+                    className="form-input no-print" 
+                    value={uc.transferTime} 
+                    onChange={(e) => updateUseCase(uc.id, 'transferTime', parseNumber(e.target.value))}
+                    step="any"
+                  />
+                </div>
+              )}
+
+              {CATEGORY_CONFIG[uc.category]?.showHandoverTime !== false && (
+                <div className="form-group">
+                  {renderLabel("Time Saved on Handover (mins)", uc.handoverTimeSaved, "Time saved on interactions that were engaged but NOT fully resolved.")}
+                  <input 
+                    type="number" 
+                    className="form-input no-print" 
+                    value={uc.handoverTimeSaved} 
+                    onChange={(e) => updateUseCase(uc.id, 'handoverTimeSaved', parseNumber(e.target.value))}
+                    step="any"
+                  />
+                </div>
+              )}
             </div>
             
             <div className="mt-4 pt-4" style={{ borderTop: '1px dashed var(--border-color)' }}>
@@ -216,7 +258,11 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                     {Math.round(uc.totalInteractions * (uc.engagementRate / 100)).toLocaleString()}
                   </div>
                   <div className="metric-subtext">
-                    {Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * (uc.resolutionRate / 100)).toLocaleString()} Resolved | {Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * (1 - (uc.resolutionRate / 100))).toLocaleString()} Handover
+                    {uc.category === 'Triage' ? (
+                      <>{Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * ((uc.transferRate || 0) / 100)).toLocaleString()} Transfers Saved | {Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * (1 - ((uc.transferRate || 0) / 100))).toLocaleString()} Routed Normally</>
+                    ) : (
+                      <>{Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * ((uc.resolutionRate || 0) / 100)).toLocaleString()} Resolved | {Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * (1 - ((uc.resolutionRate || 0) / 100))).toLocaleString()} Handover</>
+                    )}
                   </div>
                 </div>
                 <div>
@@ -230,9 +276,14 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   <div className="metric-value success" style={{ fontSize: '1.25rem' }}>
                     {(() => {
                       const engaged = uc.totalInteractions * (uc.engagementRate / 100);
-                      const resolved = engaged * (uc.resolutionRate / 100);
-                      const handover = engaged - resolved;
-                      return Math.round(((resolved * uc.actualHandlingTime) + (handover * uc.handoverTimeSaved)) / 60).toLocaleString();
+                      if (uc.category === 'Triage') {
+                        const transfers = engaged * ((uc.transferRate || 0) / 100);
+                        return Math.round((transfers * (uc.transferTime || 0)) / 60).toLocaleString();
+                      } else {
+                        const resolved = engaged * ((uc.resolutionRate || 0) / 100);
+                        const handover = engaged - resolved;
+                        return Math.round(((resolved * (uc.actualHandlingTime || 0)) + (handover * (uc.handoverTimeSaved || 0))) / 60).toLocaleString();
+                      }
                     })()} hrs
                   </div>
                 </div>

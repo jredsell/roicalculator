@@ -111,7 +111,7 @@ export default function HelpModal({ isOpen, onClose }) {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Triage</h4>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>AI acts as the first point of contact to understand intent and route to the correct human. It doesn't solve the problem, but saves the human from doing initial preamble.</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>AI acts as the first point of contact to correctly route customers. The savings come from eliminating the time human agents spend answering and then transferring calls that went to the wrong area.</p>
                 </div>
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Data Collection</h4>
@@ -154,8 +154,16 @@ export default function HelpModal({ isOpen, onClose }) {
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}><em>(Enquiries/Transactional only)</em> The average time it takes a human to completely resolve this scenario end-to-end.</p>
                 </div>
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>% of Transferred Calls</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}><em>(Triage only)</em> The percentage of calls currently going to the wrong area that the AI will now route correctly, saving transfer time.</p>
+                </div>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Time to Transfer (mins)</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}><em>(Triage only)</em> The average time a human agent spends speaking to a customer just to transfer them to the correct department.</p>
+                </div>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Time Saved on Handover (mins)</h4>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The average human time saved when the AI intercepts, collects some info, but ultimately has to hand over to a human to finish.</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}><em>(Non-Triage only)</em> The average human time saved when the AI intercepts, collects some info, but ultimately has to hand over to a human to finish.</p>
                 </div>
               </div>
             </div>
@@ -170,7 +178,8 @@ export default function HelpModal({ isOpen, onClose }) {
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>Gross Time Saved</h4>
                   <code style={{ background: 'var(--bg-color)', padding: '0.5rem', borderRadius: '6px', display: 'block', margin: '0.75rem 0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
-                    (Fully Resolved × Full Time) + (Handover × Handover Time)
+                    (Fully Resolved × Full Time) + (Handover × Handover Time) <br/>
+                    <span style={{color: 'var(--text-secondary)', fontSize: '0.75rem'}}>* For Triage: (Transfers Saved × Time to Transfer)</span>
                   </code>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Calculates the total human minutes avoided each month across all use cases.</p>
                 </div>

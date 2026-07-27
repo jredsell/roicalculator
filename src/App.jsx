@@ -27,7 +27,9 @@ const DEFAULT_USE_CASE = {
   engagementRate: 100,
   resolutionRate: 0,
   actualHandlingTime: 3, // minutes
-  handoverTimeSaved: 1 // minutes
+  handoverTimeSaved: 1, // minutes
+  transferRate: 20,
+  transferTime: 2 // minutes
 }
 
 function App() {
@@ -67,9 +69,15 @@ function App() {
       totalUnitsRequired += engagedInteractions * (uc.unitsPerInteraction || 0)
       
       // Time saved (minutes) per month
-      const fullTimeSaved = fullyResolvedInteractions * (uc.actualHandlingTime || 0)
-      const partialTimeSaved = handedOverInteractions * (uc.handoverTimeSaved || 0)
-      const timeSaved = fullTimeSaved + partialTimeSaved
+      let timeSaved = 0
+      if (uc.category === 'Triage') {
+        const transferredInteractions = engagedInteractions * ((uc.transferRate || 0) / 100)
+        timeSaved = transferredInteractions * (uc.transferTime || 0)
+      } else {
+        const fullTimeSaved = fullyResolvedInteractions * (uc.actualHandlingTime || 0)
+        const partialTimeSaved = handedOverInteractions * (uc.handoverTimeSaved || 0)
+        timeSaved = fullTimeSaved + partialTimeSaved
+      }
       totalTimeSavedMinutes += timeSaved
       
       // FTEs saved for this use case
@@ -138,16 +146,16 @@ function App() {
     ];
     
     const useCasesData = [
-      ['Name', 'Category', 'Interactions/Mo', 'Engagement (%)', 'Resolution (%)', 'Units/Interaction', 'Full Time (mins)', 'Handover Time (mins)'],
+      ['Name', 'Category', 'Interactions/Mo', 'Engagement (%)', 'Resolution/Transfer (%)', 'Units/Interaction', 'Full/Transfer Time (mins)', 'Handover Time (mins)'],
       ...useCases.map(uc => [
         uc.name,
         uc.category,
         uc.totalInteractions,
         uc.engagementRate,
-        uc.resolutionRate,
+        uc.category === 'Triage' ? uc.transferRate : uc.resolutionRate,
         uc.unitsPerInteraction,
-        uc.actualHandlingTime,
-        uc.handoverTimeSaved
+        uc.category === 'Triage' ? uc.transferTime : uc.actualHandlingTime,
+        uc.category === 'Triage' ? 0 : uc.handoverTimeSaved
       ])
     ];
 
@@ -196,9 +204,9 @@ function App() {
       { wch: 20 }, // Category
       { wch: 15 }, // Interactions/Mo
       { wch: 15 }, // Engagement (%)
-      { wch: 15 }, // Resolution (%)
+      { wch: 25 }, // Resolution/Transfer (%)
       { wch: 15 }, // Units/Interaction
-      { wch: 15 }, // Full Time (mins)
+      { wch: 25 }, // Full/Transfer Time (mins)
       { wch: 25 }  // Handover Time (mins)
     ];
     XLSX.utils.book_append_sheet(wb, wsUseCases, "Use Cases");
@@ -303,9 +311,9 @@ function App() {
                   <th>Category</th>
                   <th>Interactions / Mo</th>
                   <th>Engagement (%)</th>
-                  <th>Resolution (%)</th>
+                  <th>Resolution/Transfer (%)</th>
                   <th>Units / Interaction</th>
-                  <th>Full Time (mins)</th>
+                  <th>Full/Transfer Time (mins)</th>
                   <th>Handover Time (mins)</th>
                 </tr>
               </thead>
@@ -316,10 +324,10 @@ function App() {
                     <td>{uc.category}</td>
                     <td>{(uc.totalInteractions || 0).toLocaleString()}</td>
                     <td>{uc.engagementRate || 0}%</td>
-                    <td>{uc.resolutionRate || 0}%</td>
+                    <td>{uc.category === 'Triage' ? (uc.transferRate || 0) : (uc.resolutionRate || 0)}%</td>
                     <td>{(uc.unitsPerInteraction || 0).toLocaleString()}</td>
-                    <td>{uc.actualHandlingTime || 0}</td>
-                    <td>{uc.handoverTimeSaved || 0}</td>
+                    <td>{uc.category === 'Triage' ? (uc.transferTime || 0) : (uc.actualHandlingTime || 0)}</td>
+                    <td>{uc.category === 'Triage' ? 0 : (uc.handoverTimeSaved || 0)}</td>
                   </tr>
                 ))}
               </tbody>
