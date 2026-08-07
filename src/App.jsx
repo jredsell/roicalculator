@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { Calculator, Download, Plus, Settings, BarChart3, Printer, HelpCircle, Sun, Moon, Upload, Save, RotateCcw } from 'lucide-react'
+import { Calculator, Download, Plus, Settings, BarChart3, Printer, HelpCircle, Upload, Save, RotateCcw } from 'lucide-react'
 import * as XLSX from 'xlsx'
 
 import GlobalSettings from './components/GlobalSettings'
@@ -50,7 +50,6 @@ function App() {
   })
   const [activeTab, setActiveTab] = useState('calculator') // 'calculator', 'settings'
   const [isHelpOpen, setIsHelpOpen] = useState(false)
-  const [theme, setTheme] = useState('light')
   const fileInputRef = useRef(null)
 
   useEffect(() => {
@@ -61,13 +60,7 @@ function App() {
     localStorage.setItem('roiUseCases', JSON.stringify(useCases))
   }, [useCases])
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-  }, [theme])
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark')
-  }
 
   // Calculations
   const results = useMemo(() => {
@@ -360,13 +353,6 @@ function App() {
         </div>
         
         <div className="header-actions">
-          <button 
-            className="btn btn-secondary no-print btn-icon"
-            onClick={toggleTheme}
-            title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-          >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
           
           <button 
             className="btn btn-secondary no-print btn-icon"
