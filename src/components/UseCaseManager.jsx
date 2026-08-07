@@ -1,5 +1,5 @@
-import React from 'react'
-import { Plus, Trash2 } from 'lucide-react'
+import React, { useState } from 'react'
+import { Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
 
 const CATEGORIES = ['Triage', 'General Enquiries', 'Transactional', 'Data Collection']
 
@@ -7,57 +7,87 @@ const CATEGORY_CONFIG = {
   'Triage': {
     description: "Calculates the time saved by having the AI correctly route customers, eliminating the time human agents spend answering and then transferring calls that went to the wrong area.",
     defaultUnits: 15,
-    defaultDigitalMessages: 5,
+    defaultDigitalMessages: 4,
+    defaultAiTalkTime: 1,
+    defaultResolutionRate: 0,
+    defaultHandlingTime: 3,
+    defaultHandoverTime: 1,
+    defaultTransferRate: 15,
+    defaultTransferTime: 3,
     showResolutionRate: false,
     showHandlingTime: false,
     showHandoverTime: false,
     showTransferRate: true,
     showTransferTime: true,
   },
-  'Data Collection': {
-    description: "Calculates time saved when the AI collects required forms, details, or verifications before passing the conversation to an agent.",
-    defaultUnits: 20,
-    defaultDigitalMessages: 10,
-    showResolutionRate: false,
-    showHandlingTime: false,
-    showHandoverTime: true,
-  },
   'General Enquiries': {
     description: "Calculates the value of the AI fully resolving common questions without human intervention, plus time saved on interactions it attempts but has to hand over.",
     defaultUnits: 30,
-    defaultDigitalMessages: 10,
+    defaultDigitalMessages: 8,
+    defaultAiTalkTime: 2,
+    defaultResolutionRate: 65,
+    defaultHandlingTime: 4,
+    defaultHandoverTime: 1.5,
+    defaultTransferRate: 0,
+    defaultTransferTime: 0,
     showResolutionRate: true,
     showHandlingTime: true,
     showHandoverTime: true,
   },
   'Transactional': {
     description: "Calculates the ROI of the AI automating end-to-end processes (like booking appointments, password resets, or taking payments).",
-    defaultUnits: 50,
-    defaultDigitalMessages: 40,
+    defaultUnits: 40,
+    defaultDigitalMessages: 12,
+    defaultAiTalkTime: 3,
+    defaultResolutionRate: 60,
+    defaultHandlingTime: 6,
+    defaultHandoverTime: 3,
+    defaultTransferRate: 0,
+    defaultTransferTime: 0,
     showResolutionRate: true,
     showHandlingTime: true,
+    showHandoverTime: true,
+  },
+  'Data Collection': {
+    description: "Calculates time saved when the AI collects required forms, details, or verifications before passing the conversation to an agent.",
+    defaultUnits: 20,
+    defaultDigitalMessages: 6,
+    defaultAiTalkTime: 2,
+    defaultResolutionRate: 0,
+    defaultHandlingTime: 5,
+    defaultHandoverTime: 2.5,
+    defaultTransferRate: 0,
+    defaultTransferTime: 0,
+    showResolutionRate: false,
+    showHandlingTime: false,
     showHandoverTime: true,
   }
 }
 
 export default function UseCaseManager({ useCases, setUseCases }) {
+  const [expandedCards, setExpandedCards] = useState({})
+
+  const toggleCard = (id) => {
+    setExpandedCards(prev => ({ ...prev, [id]: !prev[id] }))
+  }
+
   const addUseCase = () => {
     const newId = Date.now().toString()
     setUseCases([{
       id: newId,
-      name: 'New Use Case',
+      name: 'New Custom Use Case',
       category: 'General Enquiries',
-      channel: 'Digital',
+      channel: 'Voice',
       unitsPerInteraction: 30,
-      digitalMessagesPerInteraction: 10,
-      aiTalkTime: 3,
+      digitalMessagesPerInteraction: 8,
+      aiTalkTime: 2,
       totalInteractions: 1000,
       engagementRate: 100,
-      resolutionRate: 50,
-      actualHandlingTime: 5,
+      resolutionRate: 65,
+      actualHandlingTime: 4,
       handoverTimeSaved: 1.5,
-      transferRate: 20,
-      transferTime: 2
+      transferRate: 15,
+      transferTime: 3
     }, ...useCases])
   }
 
@@ -72,11 +102,14 @@ export default function UseCaseManager({ useCases, setUseCases }) {
         if (field === 'category') {
           const config = CATEGORY_CONFIG[value]
           if (config) {
-            if (!config.showResolutionRate) {
-              updatedUc.resolutionRate = 0
-            }
             updatedUc.unitsPerInteraction = config.defaultUnits
             updatedUc.digitalMessagesPerInteraction = config.defaultDigitalMessages
+            updatedUc.aiTalkTime = config.defaultAiTalkTime
+            updatedUc.resolutionRate = config.defaultResolutionRate
+            updatedUc.actualHandlingTime = config.defaultHandlingTime
+            updatedUc.handoverTimeSaved = config.defaultHandoverTime
+            updatedUc.transferRate = config.defaultTransferRate
+            updatedUc.transferTime = config.defaultTransferTime
           }
         }
         return updatedUc
@@ -174,35 +207,49 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   />
                 </div>
               </div>
+            </div>
 
-              <div className="form-group">
-                {renderLabel("AI Engagement Rate (%)", uc.engagementRate, "Percentage of interactions the AI intercepts. Affects AI unit consumption.")}
-                <div className="input-wrapper">
-                  <input 
-                    type="number" 
-                    className="form-input no-print" 
-                    value={uc.engagementRate} 
-                    onChange={(e) => {
-                      let val = parseNumber(e.target.value);
-                      if (val !== '') val = Math.max(0, Math.min(100, val));
-                      updateUseCase(uc.id, 'engagementRate', val);
-                    }}
-                    max="100" min="0"
-                  />
-                </div>
-              </div>
+            <div style={{ marginTop: '1rem' }} className="no-print">
+              <button 
+                className="btn btn-secondary btn-sm" 
+                onClick={() => toggleCard(uc.id)}
+                style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
+                <span>Advanced Assumptions & Configuration</span>
+                {expandedCards[uc.id] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </button>
+            </div>
 
-              <div className="form-group">
-                {renderLabel("Units per Interaction", uc.unitsPerInteraction, "Units consumed each time the AI engages. Drives AI Software Cost.")}
-                <div className="input-wrapper">
-                  <input 
-                    type="number" 
-                    className="form-input no-print" 
-                    value={uc.unitsPerInteraction} 
-                    onChange={(e) => updateUseCase(uc.id, 'unitsPerInteraction', parseNumber(e.target.value))}
-                  />
+            {expandedCards[uc.id] && (
+              <div className="grid-3 no-print" style={{ marginTop: '1rem', padding: '1.25rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                <div className="form-group">
+                  {renderLabel("AI Engagement Rate (%)", uc.engagementRate, "Percentage of interactions the AI intercepts. Affects AI unit consumption.")}
+                  <div className="input-wrapper">
+                    <input 
+                      type="number" 
+                      className="form-input" 
+                      value={uc.engagementRate} 
+                      onChange={(e) => {
+                        let val = parseNumber(e.target.value);
+                        if (val !== '') val = Math.max(0, Math.min(100, val));
+                        updateUseCase(uc.id, 'engagementRate', val);
+                      }}
+                      max="100" min="0"
+                    />
+                  </div>
                 </div>
-              </div>
+
+                <div className="form-group">
+                  {renderLabel("Units per Interaction", uc.unitsPerInteraction, "Units consumed each time the AI engages. Drives AI Software Cost.")}
+                  <div className="input-wrapper">
+                    <input 
+                      type="number" 
+                      className="form-input" 
+                      value={uc.unitsPerInteraction} 
+                      onChange={(e) => updateUseCase(uc.id, 'unitsPerInteraction', parseNumber(e.target.value))}
+                    />
+                  </div>
+                </div>
 
               {uc.channel === 'Digital' && (
                 <div className="form-group">
@@ -314,9 +361,19 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   </div>
                 </div>
               )}
-            </div>
+              </div>
+            )}
             
             <div className="mt-4 pt-4" style={{ borderTop: '1px dashed var(--border-color)' }}>
+              <div className="text-secondary" style={{ fontSize: '0.85rem', marginBottom: '1rem', fontStyle: 'italic' }}>
+                {uc.category === 'Triage' ? (
+                  `*Based on ${uc.transferRate || 0}% of interactions currently being misrouted, taking an agent ${uc.transferTime || 0} minutes to transfer.`
+                ) : uc.category === 'Data Collection' ? (
+                  `*Based on saving an agent ${uc.handoverTimeSaved || 0} minutes of manual data entry before handing over.`
+                ) : (
+                  `*Based on fully resolving ${uc.resolutionRate || 0}% of interactions (saving ${uc.actualHandlingTime || 0} mins each) and saving ${uc.handoverTimeSaved || 0} mins on the remaining handovers.`
+                )}
+              </div>
               <div className="grid-3">
                 <div>
                   <div className="metric-label">Total Engaged / Mo</div>

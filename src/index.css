@@ -617,6 +617,18 @@ h1 {
   .print-page {
     break-after: page;
   }
+  
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  .chart-container {
+    height: 220px !important;
+  }
 }
 
 .print-only {

@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell
+  PieChart, Pie, Cell, ComposedChart, Area, Line
 } from 'recharts'
-import { TrendingUp, TrendingDown, Users, Clock, Zap } from 'lucide-react'
+import { TrendingUp, TrendingDown, Users, Clock, HelpCircle, X } from 'lucide-react'
 
 export default function ResultsDashboard({ results, useCases, globalSettings }) {
+  const [activeTooltip, setActiveTooltip] = useState(null)
+  
   // Prepare data for Savings Comparison Chart
   const costComparisonData = [
     {
@@ -31,6 +33,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
     const handedOverInteractions = engagedInteractions - fullyResolvedInteractions;
 
     return {
+      id: uc.id,
       name: uc.name,
       units: engagedInteractions * (uc.unitsPerInteraction || 0),
       timeSavedHours: ((fullyResolvedInteractions * (uc.actualHandlingTime || 0)) + (handedOverInteractions * (uc.handoverTimeSaved || 0))) / 60
@@ -38,23 +41,126 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
   }).filter(uc => uc.units > 0)
 
   const COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444']
+  
+  // Create consistent color mapping by Use Case ID
+  const useCaseColorMap = {}
+  useCases.forEach((uc, index) => {
+    useCaseColorMap[uc.id] = COLORS[index % COLORS.length]
+  })
 
   const formatCurrency = (val) => new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(val)
   const formatNumber = (val) => new Intl.NumberFormat('en-US').format(Math.round(val))
+
+  // Prepare data for Cumulative ROI Timeline
+  const roiTimelineData = Array.from({ length: 12 }, (_, i) => {
+    const month = i + 1;
+    return {
+      month: `Mo ${month}`,
+      'Annual AI Investment': results.incrementalAiCost * 12,
+      'Cumulative Value Generated': results.totalCurrentAgentCostMonthly * month
+    };
+  });
+
+  // Prepare data for Financial Value by Use Case
+  const useCaseFinancialData = useCases.map(uc => {
+    const engagedInteractions = (uc.totalInteractions || 0) * ((uc.engagementRate || 0) / 100);
+    const fullyResolvedInteractions = engagedInteractions * ((uc.resolutionRate || 0) / 100);
+    const handedOverInteractions = engagedInteractions - fullyResolvedInteractions;
+    
+    let timeSaved = 0;
+    if (uc.category === 'Triage') {
+      const transferredInteractions = engagedInteractions * ((uc.transferRate || 0) / 100);
+      timeSaved = transferredInteractions * (uc.transferTime || 0);
+    } else {
+      timeSaved = (fullyResolvedInteractions * (uc.actualHandlingTime || 0)) + (handedOverInteractions * (uc.handoverTimeSaved || 0));
+    }
+
+    const monthlyMinutesPerFte = (((globalSettings.fteWeeklyHours || 0) * 52) / 12) * 60;
+    const fteSaved = monthlyMinutesPerFte > 0 ? (timeSaved / monthlyMinutesPerFte) : 0;
+    const monthlyFteCost = (globalSettings.fullyLoadedAgentCost || 0) / 12;
+    const valueGenerated = fteSaved * monthlyFteCost;
+
+    return {
+      id: uc.id,
+      name: uc.name,
+      'Monthly Value (£)': valueGenerated
+    };
+  }).filter(uc => uc['Monthly Value (£)'] > 0).sort((a, b) => b['Monthly Value (£)'] - a['Monthly Value (£)']);
 
   const isNetPositive = results.netMonthlySavings > 0
 
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
+      
+      {/* Executive Summary Narrative */}
+      {isNetPositive && (
+        <div className="card" style={{ background: 'linear-gradient(135deg, var(--bg-secondary), var(--primary-alpha))', borderLeft: '4px solid var(--accent-primary)' }}>
+          <p style={{ fontSize: '1.2rem', margin: 0, lineHeight: '1.6', color: 'var(--text-primary)' }}>
+            By automating these use cases, you will save <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(results.netMonthlySavings)}</strong> monthly, 
+            repurpose <strong style={{ color: 'var(--accent-primary)' }}>{results.totalFteSaved.toFixed(1)} FTEs</strong> to higher-value work, 
+            and see a return on your investment in <strong style={{ color: 'var(--text-primary)' }}>{results.paybackMonths.toFixed(1)} months</strong>.
+          </p>
+        </div>
+      )}
+
       {/* Top Metrics Summary */}
       <div className="print-page">
         <div className="grid-3">
         <div className="card">
           <div className="flex items-center gap-2 mb-4">
+            <div style={{ padding: '0.5rem', background: 'var(--secondary-alpha)', borderRadius: 'var(--radius-md)' }}>
+              <Users size={24} color="var(--accent-secondary)" />
+            </div>
+            <h3 style={{ margin: 0 }}>FTE Efficiency Gained</h3>
+          </div>
+          <div className="metric-value primary" style={{ fontSize: '2.5rem' }}>
+            {results.totalFteSaved.toFixed(1)} FTEs
+          </div>
+          <div className="text-secondary mt-2">
+            {formatNumber(results.totalTimeSavedHours)} hours / month
+          </div>
+          <p className="metric-subtext mt-4">
+            Hours of manual work automated. Calculated by dividing total automated interaction time by a standard {globalSettings.fteWeeklyHours}-hour work week.
+          </p>
+        </div>
+
+        <div className="card">
+          <div className="flex items-center gap-2 mb-4">
             <div style={{ padding: '0.5rem', background: 'var(--success-alpha)', borderRadius: 'var(--radius-md)' }}>
               <TrendingUp size={24} color="var(--accent-success)" />
             </div>
-            <h3 style={{ margin: 0 }}>Projected Savings</h3>
+            <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative' }}>
+              Financial Value of Freed Capacity
+              <button 
+                onClick={() => setActiveTooltip(activeTooltip === 'financial' ? null : 'financial')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', padding: 0 }}
+              >
+                <HelpCircle size={16} />
+              </button>
+              {activeTooltip === 'financial' && (
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: '0',
+                  marginTop: '0.5rem',
+                  width: '280px',
+                  backgroundColor: 'var(--bg-secondary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '1rem',
+                  zIndex: 10,
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                    <strong style={{ fontSize: '0.9rem', color: 'var(--text-primary)' }}>Hard vs Soft ROI</strong>
+                    <button onClick={() => setActiveTooltip(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={14} /></button>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: 1.4, color: 'var(--text-secondary)', fontWeight: 400 }}>
+                    To realise this as hard cash savings, the business must shrink headcount via natural attrition or repurpose these agents to revenue-generating tasks.
+                  </p>
+                </div>
+              )}
+            </h3>
           </div>
           <div className="metric-value success" style={{ fontSize: '2.5rem' }}>
             {formatCurrency(results.netMonthlySavings)}
@@ -64,25 +170,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
             {formatCurrency(results.netYearlySavings)} / year
           </div>
           <p className="metric-subtext mt-4">
-            Cost avoided by automating work minus the cost of the AI software required to do so.
-          </p>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center gap-2 mb-4">
-            <div style={{ padding: '0.5rem', background: 'var(--secondary-alpha)', borderRadius: 'var(--radius-md)' }}>
-              <Users size={24} color="var(--accent-secondary)" />
-            </div>
-            <h3 style={{ margin: 0 }}>Human Capacity Freed</h3>
-          </div>
-          <div className="metric-value primary" style={{ fontSize: '2.5rem' }}>
-            {results.totalFteSaved.toFixed(1)} FTEs
-          </div>
-          <div className="text-secondary mt-2">
-            {formatNumber(results.totalTimeSavedHours)} hours / month
-          </div>
-          <p className="metric-subtext mt-4">
-            Based on {globalSettings.fteWeeklyHours} hour work week. These agents can be repurposed to higher-value tasks.
+            Direct cost reduction after software investments. Calculated as: Current human handling cost minus the new AI software cost.
           </p>
         </div>
 
@@ -91,7 +179,38 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
             <div style={{ padding: '0.5rem', background: 'var(--primary-alpha)', borderRadius: 'var(--radius-md)' }}>
               <Clock size={24} color="var(--accent-primary)" />
             </div>
-            <h3 style={{ margin: 0 }}>Estimated ROI</h3>
+            <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative' }}>
+              Return on Investment
+              <button 
+                onClick={() => setActiveTooltip(activeTooltip === 'roi' ? null : 'roi')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', padding: 0 }}
+              >
+                <HelpCircle size={16} />
+              </button>
+              {activeTooltip === 'roi' && (
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: '0',
+                  marginTop: '0.5rem',
+                  width: '280px',
+                  backgroundColor: 'var(--bg-secondary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '1rem',
+                  zIndex: 10,
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                    <strong style={{ fontSize: '0.9rem', color: 'var(--text-primary)' }}>ROI Calculation</strong>
+                    <button onClick={() => setActiveTooltip(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={14} /></button>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: 1.4, color: 'var(--text-secondary)', fontWeight: 400 }}>
+                    ROI is achieved when the value of the freed human capacity exceeds the AI software cost. This assumes freed capacity is realised as cash savings or growth.
+                  </p>
+                </div>
+              )}
+            </h3>
           </div>
           <div className="metric-value" style={{ fontSize: '2.5rem', color: 'var(--accent-primary)' }}>
             {formatNumber(results.roiPercentage)}%
@@ -100,7 +219,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
             Payback Period: {results.paybackMonths.toFixed(1)} months
           </div>
           <p className="metric-subtext mt-4">
-            Calculated as net savings divided by the incremental cost of the AI software. Payback assumes an annual investment.
+            Your investment pays for itself in {results.paybackMonths.toFixed(1)} months. Calculated as net savings divided by the incremental AI software cost.
           </p>
         </div>
       </div>
@@ -109,7 +228,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
       {/* Charts */}
       <div className="print-page">
       <div className="grid-2">
-        <div className="card">
+        <div className="card" style={{ breakInside: 'avoid' }}>
           <h3 className="mb-4">Monthly Cost Comparison (Automated Portion)</h3>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height="100%">
@@ -134,7 +253,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
           </div>
         </div>
 
-        <div className="card">
+        <div className="card" style={{ breakInside: 'avoid' }}>
           <h3 className="mb-4">Time Saved by Use Case (Hours/Month)</h3>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height="100%">
@@ -152,7 +271,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
                   labelLine={false}
                 >
                   {useCaseData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell key={`cell-${index}`} fill={useCaseColorMap[entry.id]} />
                   ))}
                 </Pie>
                 <Tooltip 
@@ -162,87 +281,61 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
               </PieChart>
             </ResponsiveContainer>
           </div>
+      </div>
+      </div>
+
+      <div className="grid-2" style={{ marginTop: '2rem' }}>
+        <div className="card" style={{ breakInside: 'avoid' }}>
+          <h3 className="mb-4">12-Month ROI Timeline (Break-Even)</h3>
+          <p className="text-secondary" style={{ fontSize: '0.9rem', marginBottom: '1.5rem' }}>Assuming the incremental AI software cost is paid annually upfront.</p>
+          <div className="chart-container">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={roiTimelineData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                <XAxis dataKey="month" stroke="var(--text-secondary)" />
+                <YAxis stroke="var(--text-secondary)" tickFormatter={(val) => '£' + (val / 1000) + 'k'} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}
+                  formatter={(value) => formatCurrency(value)}
+                />
+                <Legend />
+                <Area type="monotone" dataKey="Cumulative Value Generated" fill="var(--success-alpha)" stroke="var(--accent-success)" strokeWidth={3} />
+                <Line type="stepAfter" dataKey="Annual AI Investment" stroke="var(--accent-primary)" strokeWidth={3} strokeDasharray="5 5" />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="card" style={{ breakInside: 'avoid' }}>
+          <h3 className="mb-4">Financial Value by Use Case (£/Month)</h3>
+          <p className="text-secondary" style={{ fontSize: '0.9rem', marginBottom: '1.5rem' }}>The monthly gross human handling cost avoided by each use case.</p>
+          <div className="chart-container">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={useCaseFinancialData}
+                layout="vertical"
+                margin={{ top: 20, right: 30, left: 40, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} />
+                <XAxis type="number" stroke="var(--text-secondary)" tickFormatter={(val) => '£' + (val / 1000) + 'k'} />
+                <YAxis dataKey="name" type="category" stroke="var(--text-secondary)" width={100} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}
+                  formatter={(value) => formatCurrency(value)}
+                />
+                <Bar dataKey="Monthly Value (£)" fill="var(--accent-primary)" radius={[0, 4, 4, 0]}>
+                  {useCaseFinancialData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={useCaseColorMap[entry.id]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
       </div>
 
-      {/* AI Units Breakdown */}
-      <div className="print-page">
-      <div className="card">
-        <div className="flex items-center gap-2 mb-4">
-          <Zap size={20} className="text-primary" />
-          <h3 style={{ margin: 0 }}>Consumption & Costs Breakdown</h3>
-        </div>
-        
-        <div className="grid-3 mb-4">
-          {/* AI Section */}
-          <div className="cost-breakdown-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column' }}>
-            <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1rem' }}>AI Units</h4>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span className="text-secondary">Total Required:</span>
-              <span className="font-medium">{formatNumber(results.totalUnitsRequired)}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span className="text-secondary">Included:</span>
-              <span className="font-medium">{formatNumber(results.totalIncludedUnits)}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span className="text-secondary">Extra Bundles:</span>
-              <span className="font-medium">{formatNumber(results.bundlesNeeded)}</span>
-            </div>
-            <div style={{ marginTop: 'auto' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem' }}>
-                <span className="text-secondary">Extra Cost:</span>
-                <span className="font-medium text-primary">{formatCurrency(results.additionalBundlesCost)}</span>
-              </div>
-            </div>
-          </div>
 
-          {/* Digital Messages Section */}
-          <div className="cost-breakdown-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column' }}>
-            <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1rem' }}>Digital Messages</h4>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span className="text-secondary">Total Required:</span>
-              <span className="font-medium">{formatNumber(results.totalDigitalMessages)}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span className="text-secondary">Included:</span>
-              <span className="font-medium">{formatNumber(results.totalIncludedDigitalMessages)}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span className="text-secondary">Extra Bundles:</span>
-              <span className="font-medium">{formatNumber(results.digitalBundlesNeeded)}</span>
-            </div>
-            <div style={{ marginTop: 'auto' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem' }}>
-                <span className="text-secondary">Extra Cost:</span>
-                <span className="font-medium text-primary">{formatCurrency(results.additionalDigitalBundlesCost)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Speech Section */}
-          <div className="cost-breakdown-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column' }}>
-            <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1rem' }}>Voice / Speech</h4>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span className="text-secondary">Required:</span>
-              <span className="font-medium">{formatNumber(results.totalSpeechHours)} hours</span>
-            </div>
-            <div style={{ marginTop: 'auto' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--border-color)', paddingTop: '0.5rem' }}>
-                <span className="text-secondary">Cost:</span>
-                <span className="font-medium text-primary">{formatCurrency(results.speechCost)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="cost-summary-card flex justify-between items-center p-4" style={{ background: 'var(--btn-secondary-bg)', borderRadius: 'var(--radius-md)' }}>
-          <span className="font-medium text-secondary">Total Monthly Software Costs</span>
-          <span className="metric-value" style={{ fontSize: '1.5rem' }}>{formatCurrency(results.totalAiMonthlyCost)}</span>
-        </div>
-      </div>
-      </div>
     </div>
   )
 }

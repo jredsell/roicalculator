@@ -176,7 +176,7 @@ export default function GlobalSettings({ settings, setSettings }) {
         </div>
 
         <div className="form-group">
-          {renderLabel("FTE Yearly Cost (£)", "fullyLoadedAgentCost", "Average annual cost including salary, taxes, benefits, and overhead.")}
+          {renderLabel("FTE Yearly Cost (£)", "fullyLoadedAgentCost", "Average UK fully-loaded cost including base salary, Employer National Insurance (NI), workplace pension, and operational overheads.")}
           <div className="input-wrapper">
             <span className="input-icon">£</span>
             <input 

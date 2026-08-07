@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Calculator, TrendingUp, Settings as SettingsIcon, Layers } from 'lucide-react';
+import { X, Calculator, TrendingUp, Settings as SettingsIcon, Layers, BookOpen } from 'lucide-react';
 
 export default function HelpModal({ isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('settings');
@@ -30,6 +30,13 @@ export default function HelpModal({ isOpen, onClose }) {
             style={{ whiteSpace: 'nowrap' }}
           >
             <Layers size={18} /> Use Cases & Fields
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'assumptions' ? 'active' : ''}`}
+            onClick={() => setActiveTab('assumptions')}
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            <BookOpen size={18} /> Assumptions & Best Practices
           </button>
           <button 
             className={`tab-btn ${activeTab === 'math' ? 'active' : ''}`}
@@ -192,43 +199,114 @@ export default function HelpModal({ isOpen, onClose }) {
             </div>
           )}
 
+          {activeTab === 'assumptions' && (
+            <div className="help-section animate-fade-in">
+              <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>Understanding the Baseline Assumptions</h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+                When you click "Add Use Case", the calculator injects highly realistic default metrics based on industry standards. Use the explanations below to guide discussions with a CFO or Operations Director.
+              </p>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '1.5rem' }}>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--accent-success)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>1. Handover Time Saved (1.5 to 3 mins)</h4>
+                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}><strong>Question:</strong> "If the AI fails to resolve the issue and has to pass it to a human, how are we saving 1.5 minutes?"</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    <strong>Explanation:</strong> In a traditional contact centre, a human agent spends the first 60-90 seconds on the "Discovery Phase" (greeting, security checks, and listening to the customer explain their convoluted issue from scratch). 
+                    When an AI handles the front end, it does that grunt work. When it hands over the call, it passes a "warm summary" directly to the agent's screen. The human skips the discovery phase entirely and jumps straight into solving the problem, instantly shaving 1.5 to 3 minutes off the handle time of every single escalated interaction.
+                  </p>
+                </div>
+
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--accent-primary)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>2. AI Talk Time (2 to 3 mins)</h4>
+                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}><strong>Question:</strong> "Why does an AI voice call take 2 minutes? Our IVR takes 30 seconds."</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    <strong>Explanation:</strong> Generative AI is conversational, not a "Press 1" menu. It provides rich, natural language answers. Text-to-Speech (TTS) engines read this out at a normal human speed of ~140 words per minute. A standard multi-turn interaction (e.g., User asks question -&gt; AI explains -&gt; User asks follow up -&gt; AI answers -&gt; Goodbye) naturally stretches to 90–120 seconds of active AI processing and speaking time.
+                  </p>
+                </div>
+
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--accent-secondary)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>3. Full Resolution Rates (60% to 65%)</h4>
+                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}><strong>Question:</strong> "Is 65% containment actually realistic for general enquiries?"</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    <strong>Explanation:</strong> Yes. Modern Generative AI powered by RAG (Retrieval-Augmented Generation) connected to a clean knowledge base typically resolves 60-70% of tier-1 informational queries right out of the box. We default to 65% to provide a realistic, defensible baseline without overpromising 90%+ automation.
+                  </p>
+                </div>
+
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--text-muted)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>4. Digital Messages (8 to 12 per interaction)</h4>
+                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}><strong>Question:</strong> "Why does a single digital transaction use 12 AI messages?"</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    <strong>Explanation:</strong> A digital interaction is measured in individual message bubbles sent by the AI. A fully resolved transactional interaction involves a back-and-forth flow: Greeting (1), Identity collection (2-3), Intent confirmation (1), Executing the action and explaining the result (3-4), and Sign-off (1-2), averaging roughly 12 AI-generated messages.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {activeTab === 'math' && (
             <div className="help-section animate-fade-in">
-              <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>How the Math Works (100% Transparency)</h3>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>The calculator uses standard financial modeling to convert raw minutes into monetary savings.</p>
+              <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>Calculation Methodology (100% Transparency)</h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>We use standard, auditable financial modeling to convert raw interaction minutes into definitive monetary savings.</p>
               
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '1.5rem' }}>
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>Gross Time Saved</h4>
-                  <code style={{ background: 'var(--bg-color)', padding: '0.5rem', borderRadius: '6px', display: 'block', margin: '0.75rem 0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
-                    (Fully Resolved × Full Time) + (Handover × Handover Time) <br/>
-                    <span style={{color: 'var(--text-secondary)', fontSize: '0.75rem'}}>* For Triage: (Transfers Saved × Time to Transfer)</span>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>1. Time Avoidance (Gross Time Saved)</h4>
+                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>We calculate the total human minutes avoided each month by identifying interactions the AI successfully intercepts and processes without human intervention.</p>
+                  <code style={{ background: 'var(--bg-color)', padding: '0.75rem', borderRadius: '6px', display: 'block', margin: '0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem', lineHeight: '1.6' }}>
+                    <strong>For Enquiries/Transactional:</strong><br/>
+                    (Fully Resolved Interactions × Full Handling Time) + (Handed Over Interactions × Handover Time Saved)<br/>
+                    <br/>
+                    <strong>For Triage:</strong><br/>
+                    (Transfers Saved × Time to Transfer)
                   </code>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Calculates the total human minutes avoided each month across all use cases.</p>
                 </div>
                 
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>FTEs Saved</h4>
-                  <code style={{ background: 'var(--bg-color)', padding: '0.5rem', borderRadius: '6px', display: 'block', margin: '0.75rem 0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
-                    Total Time Saved / Average Monthly Minutes per FTE
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>2. Repurposed Capacity (FTEs Saved)</h4>
+                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>We convert total minutes saved into Full-Time Equivalents (FTEs) by standardising the working hours in a month.</p>
+                  <code style={{ background: 'var(--bg-color)', padding: '0.75rem', borderRadius: '6px', display: 'block', margin: '0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem', lineHeight: '1.6' }}>
+                    <strong>Average Monthly Minutes per FTE = </strong><br/>
+                    ((FTE Weekly Hours × 52 weeks) / 12 months) × 60 minutes<br/>
+                    <br/>
+                    <strong>Total FTEs Saved = </strong><br/>
+                    Total Time Saved (Minutes) / Average Monthly Minutes per FTE
                   </code>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Converts total minutes saved into Full-Time Equivalents based on weekly hours.</p>
                 </div>
 
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>Gross Financial Savings (£)</h4>
-                  <code style={{ background: 'var(--bg-color)', padding: '0.5rem', borderRadius: '6px', display: 'block', margin: '0.75rem 0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
-                    FTEs Saved × (Fully Loaded Annual Agent Cost / 12)
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>3. Gross Financial Savings (£)</h4>
+                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>We calculate the monetary value of the human capacity that has been repurposed (i.e. the human handling cost avoided).</p>
+                  <code style={{ background: 'var(--bg-color)', padding: '0.75rem', borderRadius: '6px', display: 'block', margin: '0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem', lineHeight: '1.6' }}>
+                    <strong>Current Human Handling Cost (Monthly) = </strong><br/>
+                    Total FTEs Saved × (Fully Loaded Annual Agent Cost / 12)
                   </code>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Converts the saved human capacity into a monthly financial value.</p>
                 </div>
 
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>Incremental AI Cost (£)</h4>
-                  <code style={{ background: 'var(--bg-color)', padding: '0.5rem', borderRadius: '6px', display: 'block', margin: '0.75rem 0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
-                    (Agents × AI Enablement Cost) + Extra AI Bundles Cost + Speech Cost + Extra Digital Msgs Cost
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>4. Incremental AI Cost (£)</h4>
+                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>This determines the true, net-new software cost incurred by deploying the AI. It deducts your existing base licenses from the total AI package cost to isolate the <em>premium</em> you are paying for AI.</p>
+                  <code style={{ background: 'var(--bg-color)', padding: '0.75rem', borderRadius: '6px', display: 'block', margin: '0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem', lineHeight: '1.6' }}>
+                    <strong>Base AI License Cost = </strong><br/>
+                    Total Agents × (Agent License Cost + AI Enablement Cost)<br/>
+                    <br/>
+                    <strong>Total AI Software Cost = </strong><br/>
+                    Base AI License Cost + Extra AI Bundles Cost + Speech Cost + Extra Digital Msgs Cost<br/>
+                    <br/>
+                    <strong>Incremental AI Cost = </strong><br/>
+                    Total AI Software Cost - (Total Agents × Agent License Cost)
                   </code>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The software cost incurred specifically to run the AI, above standard licenses.</p>
+                </div>
+
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>5. Financial Value & ROI (£)</h4>
+                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The final value generation metrics that combine the human cost avoided and the incremental AI cost.</p>
+                  <code style={{ background: 'var(--bg-color)', padding: '0.75rem', borderRadius: '6px', display: 'block', margin: '0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem', lineHeight: '1.6' }}>
+                    <strong>Financial Value of Freed Capacity = </strong><br/>
+                    Current Human Handling Cost (Monthly) - Incremental AI Cost<br/>
+                    <br/>
+                    <strong>Return on Investment (ROI) % = </strong><br/>
+                    (Financial Value / Incremental AI Cost) × 100
+                  </code>
                 </div>
               </div>
             </div>
@@ -241,7 +319,7 @@ export default function HelpModal({ isOpen, onClose }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
                 <div className="result-card" style={{ background: 'var(--success-alpha)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderTop: '4px solid var(--accent-success)', borderLeft: '1px solid var(--border-color)', borderRight: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
-                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-success)' }}>Projected Net Savings</h4>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-success)' }}>Financial Value of Freed Capacity</h4>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                     Bottom-line financial value. Equals <strong>Gross Savings</strong> minus <strong>AI Cost</strong>. If positive, the AI generates more value in human capacity than it costs to operate.
                   </p>
@@ -257,7 +335,7 @@ export default function HelpModal({ isOpen, onClose }) {
                 <div className="result-card" style={{ background: 'var(--primary-alpha)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderTop: '4px solid var(--accent-primary)', borderLeft: '1px solid var(--border-color)', borderRight: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)' }}>Estimated ROI (%)</h4>
                   <code style={{ background: 'var(--bg-color)', padding: '0.25rem 0.5rem', borderRadius: '4px', display: 'inline-block', margin: '0.5rem 0', fontSize: '0.8rem', color: 'var(--text-primary)' }}>
-                    (Net Monthly Savings / Incremental AI Cost) × 100
+                    (Financial Value / Incremental AI Cost) × 100
                   </code>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                     An ROI of 100% means the AI pays for itself and generates an equal amount of profit on top.

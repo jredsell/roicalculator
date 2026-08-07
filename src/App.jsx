@@ -10,7 +10,7 @@ import HelpModal from './components/HelpModal'
 const DEFAULT_GLOBAL_SETTINGS = {
   agentLicenseCost: 0, // per agent/month
   aiEnablementCost: 0, // per agent/month
-  numberOfAgents: 100, // Total number of agents to base the global cost on
+  numberOfAgents: 0, // Total number of agents
   includedAiUnits: 0, // units included per agent
   additionalBundleCost: 0, // Cost per bundle
   additionalBundleSize: 0, // Units per bundle
@@ -18,13 +18,13 @@ const DEFAULT_GLOBAL_SETTINGS = {
   includedDigitalMessages: 0, // bundled per agent
   additionalDigitalBundleCost: 0, // Cost per additional messages bundle
   additionalDigitalBundleSize: 0, // Number of messages in additional bundle
-  fteWeeklyHours: 37.5, // Hours
-  fullyLoadedAgentCost: 30000 // Annual cost
+  fteWeeklyHours: 37.5, // Standard UK FTE hours
+  fullyLoadedAgentCost: 32500 // Average UK fully-loaded cost (Salary + Employer NI + Pension + Overheads)
 }
 
-const DEFAULT_USE_CASE = {
+const DEFAULT_VOICE_TRIAGE = {
   id: '1',
-  name: 'Initial Triage',
+  name: 'Voice Triage',
   category: 'Triage',
   channel: 'Voice',
   unitsPerInteraction: 15,
@@ -34,9 +34,128 @@ const DEFAULT_USE_CASE = {
   resolutionRate: 0,
   actualHandlingTime: 3, // minutes
   handoverTimeSaved: 1, // minutes
-  transferRate: 20,
-  transferTime: 2, // minutes
-  aiTalkTime: 2 // minutes (probable AI talk time)
+  transferRate: 15,
+  transferTime: 3, // minutes
+  aiTalkTime: 1 // minutes (probable AI talk time)
+}
+
+const DEFAULT_DIGITAL_TRIAGE = {
+  id: '2',
+  name: 'Digital Triage',
+  category: 'Triage',
+  channel: 'Digital',
+  unitsPerInteraction: 5,
+  digitalMessagesPerInteraction: 4, // 4 messages sent by AI
+  totalInteractions: 3000,
+  engagementRate: 100,
+  resolutionRate: 0,
+  actualHandlingTime: 2, // minutes
+  handoverTimeSaved: 1, // minutes
+  transferRate: 15,
+  transferTime: 1.5, // 1.5 minutes of active agent handling time
+  aiTalkTime: 0 
+}
+
+const DEFAULT_VOICE_ENQUIRY = {
+  id: '3',
+  name: 'Voice GenAI Enquiry',
+  category: 'General Enquiries',
+  channel: 'Voice',
+  unitsPerInteraction: 30, // GenAI uses more processing units
+  digitalMessagesPerInteraction: 0,
+  totalInteractions: 5000,
+  engagementRate: 100,
+  resolutionRate: 65, // 65% containment for a robust GenAI Knowledge Base
+  actualHandlingTime: 4, // 4 mins human handling time
+  handoverTimeSaved: 1.5, // 1.5 mins saved if handed over
+  transferRate: 0,
+  transferTime: 0,
+  aiTalkTime: 2 // 2 mins AI talk time
+}
+
+const DEFAULT_DIGITAL_ENQUIRY = {
+  id: '4',
+  name: 'Digital GenAI Enquiry',
+  category: 'General Enquiries',
+  channel: 'Digital',
+  unitsPerInteraction: 20, 
+  digitalMessagesPerInteraction: 8, // More messages for a GenAI back-and-forth
+  totalInteractions: 3000,
+  engagementRate: 100,
+  resolutionRate: 65, // 65% containment
+  actualHandlingTime: 3, // 3 mins active human time
+  handoverTimeSaved: 1.5, // 1.5 mins saved by passing context
+  transferRate: 0,
+  transferTime: 0,
+  aiTalkTime: 0 
+}
+
+const DEFAULT_VOICE_TRANSACTIONAL = {
+  id: '5',
+  name: 'Voice Transactional',
+  category: 'Transactional',
+  channel: 'Voice',
+  unitsPerInteraction: 40, // API calls & complex flows use more units
+  digitalMessagesPerInteraction: 0,
+  totalInteractions: 2000,
+  engagementRate: 100,
+  resolutionRate: 60, // Highly structured workflows have high containment
+  actualHandlingTime: 6, // 6 mins human time (security, CRM lookups, compliance)
+  handoverTimeSaved: 3, // 3 mins saved (e.g. ID&V and data collection already done)
+  transferRate: 0,
+  transferTime: 0,
+  aiTalkTime: 3 // 3 mins AI talk time (reading options, confirming data)
+}
+
+const DEFAULT_DIGITAL_TRANSACTIONAL = {
+  id: '6',
+  name: 'Digital Transactional',
+  category: 'Transactional',
+  channel: 'Digital',
+  unitsPerInteraction: 20, 
+  digitalMessagesPerInteraction: 12, // Long flow: ID&V, collect data, confirm, receipt
+  totalInteractions: 2000,
+  engagementRate: 100,
+  resolutionRate: 60, // 60% containment
+  actualHandlingTime: 4.5, // 4.5 mins active human time
+  handoverTimeSaved: 2.5, // 2.5 mins saved
+  transferRate: 0,
+  transferTime: 0,
+  aiTalkTime: 0 
+}
+
+const DEFAULT_VOICE_DATA = {
+  id: '7',
+  name: 'Voice Data Collection',
+  category: 'Data Collection',
+  channel: 'Voice',
+  unitsPerInteraction: 20, 
+  digitalMessagesPerInteraction: 0,
+  totalInteractions: 4000,
+  engagementRate: 100,
+  resolutionRate: 0, // By definition, data collection hands over to a human
+  actualHandlingTime: 5, 
+  handoverTimeSaved: 2.5, // 2.5 mins of tedious data entry saved
+  transferRate: 0,
+  transferTime: 0,
+  aiTalkTime: 2 // 2 mins AI talk time to accurately capture spellings/numbers
+}
+
+const DEFAULT_DIGITAL_DATA = {
+  id: '8',
+  name: 'Digital Data Collection',
+  category: 'Data Collection',
+  channel: 'Digital',
+  unitsPerInteraction: 10, 
+  digitalMessagesPerInteraction: 6, // 6 messages to gather a form's worth of data
+  totalInteractions: 4000,
+  engagementRate: 100,
+  resolutionRate: 0, 
+  actualHandlingTime: 4, 
+  handoverTimeSaved: 2, // 2 mins saved
+  transferRate: 0,
+  transferTime: 0,
+  aiTalkTime: 0 
 }
 
 function App() {
@@ -46,7 +165,7 @@ function App() {
   })
   const [useCases, setUseCases] = useState(() => {
     const saved = localStorage.getItem('roiUseCases')
-    return saved ? JSON.parse(saved) : [DEFAULT_USE_CASE]
+    return saved ? JSON.parse(saved) : []
   })
   const [activeTab, setActiveTab] = useState('calculator') // 'calculator', 'settings'
   const [isHelpOpen, setIsHelpOpen] = useState(false)
@@ -204,9 +323,9 @@ function App() {
   }
 
   const resetData = () => {
-    if (window.confirm("Are you sure you want to clear all data and reset to defaults?")) {
+    if (window.confirm("Are you sure you want to clear all data and reset to zero?")) {
       setGlobalSettings(DEFAULT_GLOBAL_SETTINGS)
-      setUseCases([DEFAULT_USE_CASE])
+      setUseCases([])
       localStorage.removeItem('roiGlobalSettings')
       localStorage.removeItem('roiUseCases')
     }
@@ -267,9 +386,10 @@ function App() {
       ['Total Time Saved (Hours/Mo)', results.totalTimeSavedHours],
       ['Total FTEs Saved', results.totalFteSaved],
       ['Current Human Handling Cost (£/Mo)', results.totalCurrentAgentCostMonthly],
-      ['Net Monthly Savings (£)', results.netMonthlySavings],
-      ['Net Yearly Savings (£)', results.netYearlySavings],
-      ['Estimated ROI (%)', results.roiPercentage]
+      ['Financial Value of Freed Capacity (£/Mo)', results.netMonthlySavings],
+      ['Financial Value of Freed Capacity (£/Yr)', results.netYearlySavings],
+      ['Estimated ROI (%)', results.roiPercentage],
+      ['Payback Period (Months)', results.paybackMonths]
     ];
 
     const wb = XLSX.utils.book_new();
@@ -466,33 +586,7 @@ function App() {
             </table>
           </div>
 
-          <div className="print-page">
-            <h2>Global Assumptions</h2>
-            <table className="use-case-print-table" style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
-              <thead>
-                <tr>
-                  <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Agent License Cost</th>
-                  <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>AI Enablement Cost</th>
-                  <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Included Units/Agent</th>
-                  <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>AI Unit Bundle (Units/Cost)</th>
-                  <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>FTE Weekly Hours</th>
-                  <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>FTE Yearly Cost</th>
-                  <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)' }}>Total Agents</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>£{globalSettings.agentLicenseCost} / mo</td>
-                  <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>£{globalSettings.aiEnablementCost} / mo</td>
-                  <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{(globalSettings.includedAiUnits || 0).toLocaleString()}</td>
-                  <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{(globalSettings.additionalBundleSize || 0).toLocaleString()} for £{globalSettings.additionalBundleCost}</td>
-                  <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{globalSettings.fteWeeklyHours}</td>
-                  <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>£{(globalSettings.fullyLoadedAgentCost || 0).toLocaleString()}</td>
-                  <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>{globalSettings.numberOfAgents}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+
         </div>
       </main>
 
