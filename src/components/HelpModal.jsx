@@ -140,19 +140,19 @@ export default function HelpModal({ isOpen, onClose }) {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Triage</h4>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>AI acts as the first point of contact to correctly route customers. The savings come from eliminating the time human agents spend answering and then transferring calls that went to the wrong area.</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>AI acts as the first point of contact to route customers correctly, eliminating manual transfer time. Includes units to understand the user's intent and route them to the appropriate area.</p>
                 </div>
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Data Collection</h4>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>AI intercepts the conversation to gather necessary info (e.g. account numbers, identity verification) <em>before</em> handing over to a human.</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>AI gathers required information (e.g., 5-10 questions) before handing over to a human agent, saving manual data entry time. Triage costs are not included here.</p>
                 </div>
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>General Enquiries</h4>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>AI fully resolves common, informational questions by leveraging a knowledge base (FAQs) without human intervention.</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>AI resolves common questions. Calculates savings from full resolutions and time saved on handovers. Includes units to triage, answer, and hand over if required.</p>
                 </div>
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Transactional</h4>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Highest-value automation. AI integrates with backend systems to complete an end-to-end process (e.g. taking payments, resetting passwords).</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Highest-value automation where AI completes end-to-end tasks (e.g., booking appointments, taking payments). Triage costs are not included here.</p>
                 </div>
               </div>
 
@@ -218,8 +218,8 @@ export default function HelpModal({ isOpen, onClose }) {
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>1. Handover Time Saved (1.5 to 3 mins)</h4>
                   <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}><strong>Question:</strong> "If the AI fails to resolve the issue and has to pass it to a human, how are we saving 1.5 minutes?"</p>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                    <strong>Explanation:</strong> In a traditional contact centre, a human agent spends the first 60-90 seconds on the "Discovery Phase" (greeting, security checks, and listening to the customer explain their convoluted issue from scratch). 
-                    When an AI handles the front end, it does that grunt work. When it hands over the call, it passes a "warm summary" directly to the agent's screen. The human skips the discovery phase entirely and jumps straight into solving the problem, instantly shaving 1.5 to 3 minutes off the handle time of every single escalated interaction.
+                    <strong>Explanation:</strong> In a traditional contact centre, a human agent spends the first 60-90 seconds on the "Discovery Phase" (greeting, security checks, and understanding the issue). 
+                    When an AI handles the front end, it completes this initial phase. Upon handover, it passes a summary directly to the agent's screen. The agent skips the discovery phase and jumps straight into solving the problem, saving 1.5 to 3 minutes on every escalated interaction.
                   </p>
                 </div>
 
@@ -378,9 +378,9 @@ export default function HelpModal({ isOpen, onClose }) {
                 </div>
 
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--accent-secondary)', border: '1px solid var(--border-color)' }}>
-                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>2. Cost Arbitrage</h4>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>2. Cost Differences</h4>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                    Voice interactions require Speech processing (which costs several pounds per 100 hours), whereas Digital interactions only consume text messages (which cost pennies per bundle). Moving volume from Voice to Digital drops your expensive Speech costs significantly while only marginally increasing your Digital Message costs, yielding strong ROI.
+                    Voice interactions incur AI speech processing costs, whereas Digital interactions consume AI text messages. Digital interactions generally have a lower cost to serve than Voice. Deflecting volume to Digital channels reduces overall operational costs, yielding a stronger ROI.
                   </p>
                 </div>
 

@@ -294,7 +294,7 @@ export default function ChannelShiftModeller({ useCases, globalSettings }) {
       <div className="card mt-4" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
         <h3 className="mb-4">Projected Digital Equivalents</h3>
         <p className="text-secondary mb-4" style={{ fontSize: '0.9rem' }}>
-          When volume shifts from a Voice use case, it moves into a corresponding auto-generated Digital use case. Adjust the assumed digital metrics below to see how they impact your projected ROI.
+          Adjust the assumed digital metrics below to see how they impact your projected ROI.
         </p>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
