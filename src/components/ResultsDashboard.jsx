@@ -156,7 +156,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
                     <button onClick={() => setActiveTooltip(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={14} /></button>
                   </div>
                   <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: 1.4, color: 'var(--text-secondary)', fontWeight: 400 }}>
-                    To realise this as hard cash savings, the business must shrink headcount via natural attrition or repurpose these agents to revenue-generating tasks.
+                    To realise this as hard cash savings, the business must shrink headcount via natural attrition or repurpose these agents to other areas or departments.
                   </p>
                 </div>
               )}

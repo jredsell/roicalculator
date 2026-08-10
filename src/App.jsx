@@ -563,9 +563,9 @@ function App() {
                   </div>
                 </div>
                 <div>
-                  <div className="metric-label">Total Speech Minutes Needed</div>
+                  <div className="metric-label">Total Speech Hours Needed</div>
                   <div className="metric-value" style={{ fontSize: '2rem', color: 'var(--accent-secondary)' }}>
-                    {Math.round(results.totalSpeechMinutes).toLocaleString()}
+                    {Math.round(results.totalSpeechHours).toLocaleString()}
                   </div>
                 </div>
                 <div>
