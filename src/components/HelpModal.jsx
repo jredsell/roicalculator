@@ -173,7 +173,7 @@ export default function HelpModal({ isOpen, onClose }) {
                 </div>
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>AI Talk Time (Voice) / Msgs (Digital)</h4>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The average time the AI spends talking (in minutes), or the number of digital messages per interaction.</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The average time the AI spends talking (in hours), or the number of digital messages per interaction.</p>
                 </div>
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)' }}>Full Resolution Rate (%)</h4>

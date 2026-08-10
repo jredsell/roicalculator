@@ -8,7 +8,7 @@ const CATEGORY_CONFIG = {
     description: "Calculates the time saved by having the AI correctly route customers, eliminating the time human agents spend answering and then transferring calls that went to the wrong area.",
     defaultUnits: 15,
     defaultDigitalMessages: 4,
-    defaultAiTalkTime: 1,
+    defaultAiTalkTime: 0.017,
     defaultResolutionRate: 0,
     defaultHandlingTime: 3,
     defaultHandoverTime: 1,
@@ -24,7 +24,7 @@ const CATEGORY_CONFIG = {
     description: "Calculates the value of the AI fully resolving common questions without human intervention, plus time saved on interactions it attempts but has to hand over.",
     defaultUnits: 30,
     defaultDigitalMessages: 8,
-    defaultAiTalkTime: 2,
+    defaultAiTalkTime: 0.033,
     defaultResolutionRate: 65,
     defaultHandlingTime: 4,
     defaultHandoverTime: 1.5,
@@ -38,7 +38,7 @@ const CATEGORY_CONFIG = {
     description: "Calculates the ROI of the AI automating end-to-end processes (like booking appointments, password resets, or taking payments).",
     defaultUnits: 40,
     defaultDigitalMessages: 12,
-    defaultAiTalkTime: 3,
+    defaultAiTalkTime: 0.05,
     defaultResolutionRate: 60,
     defaultHandlingTime: 6,
     defaultHandoverTime: 3,
@@ -52,7 +52,7 @@ const CATEGORY_CONFIG = {
     description: "Calculates time saved when the AI collects required forms, details, or verifications before passing the conversation to an agent.",
     defaultUnits: 20,
     defaultDigitalMessages: 6,
-    defaultAiTalkTime: 2,
+    defaultAiTalkTime: 0.033,
     defaultResolutionRate: 0,
     defaultHandlingTime: 5,
     defaultHandoverTime: 2.5,
@@ -80,7 +80,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
       channel: 'Voice',
       unitsPerInteraction: 30,
       digitalMessagesPerInteraction: 8,
-      aiTalkTime: 2,
+      aiTalkTime: 0.033,
       totalInteractions: 1000,
       engagementRate: 100,
       resolutionRate: 65,
@@ -267,7 +267,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
 
               {uc.channel === 'Voice' && (
                 <div className="form-group">
-                  {renderLabel("AI Talk Time (mins)", uc.aiTalkTime, "Average time the AI spends talking. Used for speech costs.")}
+                  {renderLabel("AI Talk Time (hours)", uc.aiTalkTime, "Average time the AI spends talking. Used for speech costs.")}
                   <div className="input-wrapper">
                     <input 
                       type="number" 
@@ -406,7 +406,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                     <>
                       <div className="metric-label">Voice Hours</div>
                       <div className="metric-value" style={{ fontSize: '1.25rem', color: 'var(--accent-secondary)' }}>
-                        {((uc.totalInteractions * (uc.engagementRate / 100)) * (uc.aiTalkTime || 0) / 60).toFixed(1)}
+                        {((uc.totalInteractions * (uc.engagementRate / 100)) * (uc.aiTalkTime || 0)).toFixed(1)}
                       </div>
                     </>
                   )}
