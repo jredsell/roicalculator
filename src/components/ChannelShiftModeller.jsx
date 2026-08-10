@@ -169,7 +169,7 @@ export default function ChannelShiftModeller({ useCases, globalSettings }) {
         </p>
         {additionalSavings > 0 && (
           <p style={{ fontSize: '0.9rem', margin: '1rem 0 0 0', color: 'var(--text-secondary)', padding: '0.85rem', background: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', lineHeight: '1.5' }}>
-            <strong>Where does this extra value come from?</strong> Even if the human time saved (FTEs) remains similar across channels, automating on Digital is significantly cheaper than Voice. You are dropping the expensive AI Speech processing costs and replacing them with much cheaper AI text messages. This cost arbitrage goes straight to your bottom line.
+            <strong>Where does this extra value come from?</strong> Even if the human time saved (FTEs) remains similar across channels, digital interactions have a lower cost to serve than Voice. This difference generates additional savings.
           </p>
         )}
       </div>

@@ -5,7 +5,7 @@ const CATEGORIES = ['Triage', 'General Enquiries', 'Transactional', 'Data Collec
 
 export const CATEGORY_CONFIG = {
   'Triage': {
-    description: "Calculates the time saved by having the AI correctly route customers, eliminating the time human agents spend answering and then transferring calls that went to the wrong area.",
+    description: "Calculates time saved by routing customers correctly, eliminating manual transfer time. Includes units to understand the user's intent and route them to the appropriate area.",
     defaultUnits: 15,
     defaultDigitalMessages: 4,
     defaultAiTalkTime: 1,
@@ -21,7 +21,7 @@ export const CATEGORY_CONFIG = {
     showTransferTime: true,
   },
   'General Enquiries': {
-    description: "Calculates the value of the AI fully resolving common questions without human intervention, plus time saved on interactions it attempts but has to hand over.",
+    description: "Calculates value from resolving common questions and saving time on handovers. Includes units to triage the enquiry, provide an answer, and pass to an agent if required.",
     defaultUnits: 30,
     defaultDigitalMessages: 8,
     defaultAiTalkTime: 2,
@@ -35,7 +35,7 @@ export const CATEGORY_CONFIG = {
     showHandoverTime: true,
   },
   'Transactional': {
-    description: "Calculates the ROI of the AI automating end-to-end processes (like booking appointments, password resets, or taking payments).",
+    description: "Calculates ROI for automating the most common end-to-end tasks (e.g., booking appointments, taking payments). The cost of units does not include triage.",
     defaultUnits: 40,
     defaultDigitalMessages: 12,
     defaultAiTalkTime: 3,
@@ -49,7 +49,7 @@ export const CATEGORY_CONFIG = {
     showHandoverTime: true,
   },
   'Data Collection': {
-    description: "Calculates time saved when the AI collects required forms, details, or verifications before passing the conversation to an agent.",
+    description: "Calculates time saved by gathering information before agent handover. Includes units to collect and clean 5-10 questions. The cost of triage is not included.",
     defaultUnits: 20,
     defaultDigitalMessages: 6,
     defaultAiTalkTime: 2,
