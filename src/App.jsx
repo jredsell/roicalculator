@@ -228,7 +228,7 @@ function App() {
     const settingsData = [
       ['Setting', 'Value'],
       ['Total Number of Human Agents', globalSettings.numberOfAgents],
-      ['Agent License Cost (£/month)', globalSettings.agentLicenseCost],
+      ['Agent Licence Cost (£/month)', globalSettings.agentLicenseCost],
       ['AI Enablement Cost (£/agent/month)', globalSettings.aiEnablementCost],
       ['Included AI Units (per agent/month)', globalSettings.includedAiUnits],
       ['AI Unit Bundle Cost (£)', globalSettings.additionalBundleCost],

@@ -1,41 +1,82 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { calculateResults } from '../utils/calculatorEngine';
-import { ArrowRightLeft, TrendingUp, TrendingDown, Clock, MessageSquare, Phone } from 'lucide-react';
+import { ArrowRightLeft, TrendingUp, TrendingDown, Clock, MessageSquare, Phone, ChevronDown, ChevronUp } from 'lucide-react';
+import { CATEGORY_CONFIG } from './UseCaseManager';
 
 export default function ChannelShiftModeller({ useCases, globalSettings }) {
   const [shiftPercentage, setShiftPercentage] = useState(40);
+  const [digitalAssumptions, setDigitalAssumptions] = useState({});
+  const [expandedCards, setExpandedCards] = useState({});
 
-  // 1. Calculate Current Results
+  // 1. Initialize digital assumptions for any Voice use case that doesn't have them yet
+  useEffect(() => {
+    const voiceUseCases = useCases.filter(uc => uc.channel === 'Voice');
+    setDigitalAssumptions(prev => {
+      const updated = { ...prev };
+      let changed = false;
+      voiceUseCases.forEach(uc => {
+        if (!updated[uc.id]) {
+          const config = CATEGORY_CONFIG[uc.category];
+          updated[uc.id] = {
+            unitsPerInteraction: config?.defaultUnits || 30,
+            digitalMessagesPerInteraction: config?.defaultDigitalMessages || 8,
+            resolutionRate: config?.defaultResolutionRate || 65,
+            actualHandlingTime: config?.defaultHandlingTime || 4,
+            handoverTimeSaved: config?.defaultHandoverTime || 1.5,
+            transferRate: config?.defaultTransferRate || 0,
+            transferTime: config?.defaultTransferTime || 0,
+            engagementRate: uc.engagementRate || 100
+          };
+          changed = true;
+        }
+      });
+      return changed ? updated : prev;
+    });
+  }, [useCases]);
+
+  // 2. Calculate Current Results
   const currentResults = useMemo(() => {
     return calculateResults(useCases, globalSettings);
   }, [useCases, globalSettings]);
 
-  // 2. Generate Projected Use Cases based on Shift Percentage
+  // 3. Generate Projected Use Cases based on Shift Percentage
   const projectedUseCases = useMemo(() => {
     // Deep clone the use cases
     const cloned = JSON.parse(JSON.stringify(useCases));
+    const projectedDigital = [];
     
-    // Group by category to find Voice/Digital pairs
-    const byCategory = {};
     cloned.forEach(uc => {
-      if (!byCategory[uc.category]) byCategory[uc.category] = { Voice: null, Digital: null };
-      if (uc.channel === 'Voice') byCategory[uc.category].Voice = uc;
-      if (uc.channel === 'Digital') byCategory[uc.category].Digital = uc;
-    });
-
-    // Apply the shift
-    Object.values(byCategory).forEach(pair => {
-      if (pair.Voice && pair.Digital) {
-        const shiftVolume = Math.round((pair.Voice.totalInteractions || 0) * (shiftPercentage / 100));
-        pair.Voice.totalInteractions -= shiftVolume;
-        pair.Digital.totalInteractions += shiftVolume;
+      if (uc.channel === 'Voice') {
+        const shiftVolume = Math.round((uc.totalInteractions || 0) * (shiftPercentage / 100));
+        uc.totalInteractions -= shiftVolume; // Deduct volume from Voice
+        
+        // Create the auto-generated digital counterpart
+        if (shiftVolume > 0 && digitalAssumptions[uc.id]) {
+          const assumptions = digitalAssumptions[uc.id];
+          projectedDigital.push({
+            id: `projected-digital-${uc.id}`,
+            name: `${uc.name} (Digital Shift)`,
+            category: uc.category,
+            channel: 'Digital',
+            totalInteractions: shiftVolume,
+            engagementRate: assumptions.engagementRate,
+            unitsPerInteraction: assumptions.unitsPerInteraction,
+            digitalMessagesPerInteraction: assumptions.digitalMessagesPerInteraction,
+            resolutionRate: assumptions.resolutionRate,
+            actualHandlingTime: assumptions.actualHandlingTime,
+            handoverTimeSaved: assumptions.handoverTimeSaved,
+            transferRate: assumptions.transferRate,
+            transferTime: assumptions.transferTime,
+            aiTalkTime: 0 // Not applicable for digital
+          });
+        }
       }
     });
 
-    return cloned;
-  }, [useCases, shiftPercentage]);
+    return [...cloned, ...projectedDigital];
+  }, [useCases, shiftPercentage, digitalAssumptions]);
 
-  // 3. Calculate Projected Results
+  // 4. Calculate Projected Results
   const projectedResults = useMemo(() => {
     return calculateResults(projectedUseCases, globalSettings);
   }, [projectedUseCases, globalSettings]);
@@ -51,6 +92,37 @@ export default function ChannelShiftModeller({ useCases, globalSettings }) {
 
   const additionalSavings = projectedResults.netMonthlySavings - currentResults.netMonthlySavings;
 
+  const updateAssumption = (voiceId, field, value) => {
+    setDigitalAssumptions(prev => ({
+      ...prev,
+      [voiceId]: {
+        ...prev[voiceId],
+        [field]: value
+      }
+    }));
+  };
+
+  const parseNumber = (val) => {
+    if (val === '') return '';
+    const parsed = parseFloat(val);
+    return Number.isNaN(parsed) ? '' : parsed;
+  }
+
+  const toggleCard = (id) => {
+    setExpandedCards(prev => ({ ...prev, [id]: !prev[id] }))
+  }
+
+  const renderLabel = (text, value, description) => (
+    <div style={{ marginBottom: '0.25rem' }}>
+      <label className={`form-label ${value === '' ? 'text-danger' : ''}`} style={{ marginBottom: '0.125rem' }}>
+        {text} {value === '' && '*'}
+      </label>
+      {description && <div className="text-secondary" style={{ fontSize: '0.75rem', lineHeight: 1.2 }}>{description}</div>}
+    </div>
+  )
+
+  const voiceUseCasesList = useCases.filter(uc => uc.channel === 'Voice');
+
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
       
@@ -63,7 +135,7 @@ export default function ChannelShiftModeller({ useCases, globalSettings }) {
           Channel Shift Modeller
         </h2>
         <p className="text-secondary mb-4">
-          Model the impact of successfully deflecting voice calls to digital channels. This automatically pairs your Voice and Digital use cases by Category (e.g., Triage) and shifts the interaction volume accordingly.
+          Model the impact of successfully deflecting voice calls to digital channels. This automatically redirects volume from your Voice use cases into dynamically generated Digital use cases.
         </p>
         
         <div style={{ padding: '1.5rem', background: 'var(--bg-primary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
@@ -90,9 +162,16 @@ export default function ChannelShiftModeller({ useCases, globalSettings }) {
       {/* Impact Summary */}
       <div className="card" style={{ background: additionalSavings > 0 ? 'linear-gradient(135deg, var(--bg-secondary), var(--success-alpha))' : 'var(--bg-secondary)', borderLeft: `4px solid ${additionalSavings > 0 ? 'var(--accent-success)' : 'var(--text-muted)'}` }}>
         <p style={{ fontSize: '1.2rem', margin: 0, lineHeight: '1.6', color: 'var(--text-primary)' }}>
-          Shifting <strong>{shiftPercentage}%</strong> of voice interactions to digital channels would free up an additional <strong>{(projectedResults.totalFteSaved - currentResults.totalFteSaved).toFixed(1)} FTEs</strong>. 
-          This generates <strong>{formatCurrency(additionalSavings)}</strong> in extra monthly value, bringing your total monthly value to <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(projectedResults.netMonthlySavings)}</strong>.
+          Shifting <strong>{shiftPercentage}%</strong> of voice interactions to digital channels generates <strong>{formatCurrency(additionalSavings)}</strong> in extra monthly value, bringing your total monthly value to <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(projectedResults.netMonthlySavings)}</strong>.
+          {Math.abs(projectedResults.totalFteSaved - currentResults.totalFteSaved) > 0.1 && (
+            <span> This also changes your human capacity savings by <strong>{(projectedResults.totalFteSaved - currentResults.totalFteSaved).toFixed(1)} FTEs</strong>.</span>
+          )}
         </p>
+        {additionalSavings > 0 && (
+          <p style={{ fontSize: '0.9rem', margin: '1rem 0 0 0', color: 'var(--text-secondary)', padding: '0.85rem', background: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', lineHeight: '1.5' }}>
+            <strong>Where does this extra value come from?</strong> Even if the human time saved (FTEs) remains similar across channels, automating on Digital is significantly cheaper than Voice. You are dropping the expensive AI Speech processing costs and replacing them with much cheaper AI text messages. This cost arbitrage goes straight to your bottom line.
+          </p>
+        )}
       </div>
 
       {/* Comparison Grid */}
@@ -208,6 +287,168 @@ export default function ChannelShiftModeller({ useCases, globalSettings }) {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Projected Digital Assumptions */}
+      <div className="card mt-4" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+        <h3 className="mb-4">Projected Digital Equivalents</h3>
+        <p className="text-secondary mb-4" style={{ fontSize: '0.9rem' }}>
+          When volume shifts from a Voice use case, it moves into a corresponding auto-generated Digital use case. Adjust the assumed digital metrics below to see how they impact your projected ROI.
+        </p>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {voiceUseCasesList.map((uc) => {
+            const assumptions = digitalAssumptions[uc.id];
+            if (!assumptions) return null;
+            
+            return (
+              <div key={uc.id} style={{ background: 'var(--bg-primary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflow: 'hidden' }}>
+                <button 
+                  onClick={() => toggleCard(uc.id)}
+                  style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-primary)', fontWeight: 600 }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span className="badge" style={{ background: 'var(--primary-alpha)', color: 'var(--accent-primary)' }}>{uc.category}</span>
+                    <span>{uc.name} (Digital Equivalent)</span>
+                  </div>
+                  {expandedCards[uc.id] ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                </button>
+                
+                {expandedCards[uc.id] && (
+                  <div style={{ padding: '1.25rem', borderTop: '1px solid var(--border-color)' }}>
+                    <div className="grid-3">
+                      <div className="form-group">
+                        {renderLabel("AI Engagement Rate (%)", assumptions.engagementRate)}
+                        <div className="input-wrapper">
+                          <input 
+                            type="number" 
+                            className="form-input" 
+                            value={assumptions.engagementRate} 
+                            onChange={(e) => {
+                              let val = parseNumber(e.target.value);
+                              if (val !== '') val = Math.max(0, Math.min(100, val));
+                              updateAssumption(uc.id, 'engagementRate', val);
+                            }}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="form-group">
+                        {renderLabel("Units per Interaction", assumptions.unitsPerInteraction)}
+                        <div className="input-wrapper">
+                          <input 
+                            type="number" 
+                            className="form-input" 
+                            value={assumptions.unitsPerInteraction} 
+                            onChange={(e) => updateAssumption(uc.id, 'unitsPerInteraction', parseNumber(e.target.value))}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-group">
+                        {renderLabel("Digital Messages per Interaction", assumptions.digitalMessagesPerInteraction)}
+                        <div className="input-wrapper">
+                          <input 
+                            type="number" 
+                            className="form-input" 
+                            value={assumptions.digitalMessagesPerInteraction} 
+                            onChange={(e) => updateAssumption(uc.id, 'digitalMessagesPerInteraction', parseNumber(e.target.value))}
+                          />
+                        </div>
+                      </div>
+
+                      {CATEGORY_CONFIG[uc.category]?.showResolutionRate && (
+                        <div className="form-group">
+                          {renderLabel("Full Resolution Rate (%)", assumptions.resolutionRate)}
+                          <div className="input-wrapper">
+                            <input 
+                              type="number" 
+                              className="form-input" 
+                              value={assumptions.resolutionRate} 
+                              onChange={(e) => {
+                                let val = parseNumber(e.target.value);
+                                if (val !== '') val = Math.max(0, Math.min(100, val));
+                                updateAssumption(uc.id, 'resolutionRate', val);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {CATEGORY_CONFIG[uc.category]?.showHandlingTime && (
+                        <div className="form-group">
+                          {renderLabel("Full Agent Handling Time (mins)", assumptions.actualHandlingTime)}
+                          <div className="input-wrapper">
+                            <input 
+                              type="number" 
+                              className="form-input" 
+                              value={assumptions.actualHandlingTime} 
+                              onChange={(e) => updateAssumption(uc.id, 'actualHandlingTime', parseNumber(e.target.value))}
+                              step="any"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      
+                      {CATEGORY_CONFIG[uc.category]?.showHandoverTime !== false && (
+                        <div className="form-group">
+                          {renderLabel("Time Saved on Handover (mins)", assumptions.handoverTimeSaved)}
+                          <div className="input-wrapper">
+                            <input 
+                              type="number" 
+                              className="form-input" 
+                              value={assumptions.handoverTimeSaved} 
+                              onChange={(e) => updateAssumption(uc.id, 'handoverTimeSaved', parseNumber(e.target.value))}
+                              step="any"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {CATEGORY_CONFIG[uc.category]?.showTransferRate && (
+                        <div className="form-group">
+                          {renderLabel("% of Transferred Calls", assumptions.transferRate)}
+                          <div className="input-wrapper">
+                            <input 
+                              type="number" 
+                              className="form-input" 
+                              value={assumptions.transferRate} 
+                              onChange={(e) => {
+                                let val = parseNumber(e.target.value);
+                                if (val !== '') val = Math.max(0, Math.min(100, val));
+                                updateAssumption(uc.id, 'transferRate', val);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {CATEGORY_CONFIG[uc.category]?.showTransferTime && (
+                        <div className="form-group">
+                          {renderLabel("Time to Transfer (mins)", assumptions.transferTime)}
+                          <div className="input-wrapper">
+                            <input 
+                              type="number" 
+                              className="form-input" 
+                              value={assumptions.transferTime} 
+                              onChange={(e) => updateAssumption(uc.id, 'transferTime', parseNumber(e.target.value))}
+                              step="any"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {voiceUseCasesList.length === 0 && (
+            <div className="text-center p-4 text-muted">
+              No voice use cases defined to shift.
+            </div>
+          )}
         </div>
       </div>
 

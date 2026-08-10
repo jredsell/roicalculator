@@ -77,8 +77,8 @@ export default function HelpModal({ isOpen, onClose }) {
                 </div>
                 
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)' }}>Agent License Cost (£/month)</h4>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The existing monthly software license cost you pay for each human agent (e.g., your CCaaS platform).</p>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)' }}>Agent Licence Cost (£/month)</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The existing monthly software licence cost you pay for each human agent (e.g., your CCaaS platform).</p>
                 </div>
 
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
@@ -88,7 +88,7 @@ export default function HelpModal({ isOpen, onClose }) {
 
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)' }}>Included AI Units (per agent/month)</h4>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The number of AI interactions (units) that come included for free with each AI-enabled agent license.</p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>The number of AI interactions (units) that come included for free with each AI-enabled agent licence.</p>
                 </div>
 
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
@@ -291,16 +291,16 @@ export default function HelpModal({ isOpen, onClose }) {
 
                 <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-primary)', fontSize: '1.1rem' }}>4. Incremental AI Cost (£)</h4>
-                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>This determines the true, net-new software cost incurred by deploying the AI. It deducts your existing base licenses from the total AI package cost to isolate the <em>premium</em> you are paying for AI.</p>
+                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>This determines the true, net-new software cost incurred by deploying the AI. It deducts your existing base licences from the total AI package cost to isolate the <em>premium</em> you are paying for AI.</p>
                   <code style={{ background: 'var(--bg-color)', padding: '0.75rem', borderRadius: '6px', display: 'block', margin: '0', color: 'var(--text-primary)', border: '1px solid var(--border-color)', fontSize: '0.85rem', lineHeight: '1.6' }}>
-                    <strong>Base AI License Cost = </strong><br/>
-                    Total Agents × (Agent License Cost + AI Enablement Cost)<br/>
+                    <strong>Base AI Licence Cost = </strong><br/>
+                    Total Agents × (Agent Licence Cost + AI Enablement Cost)<br/>
                     <br/>
                     <strong>Total AI Software Cost = </strong><br/>
-                    Base AI License Cost + Extra AI Bundles Cost + Speech Cost + Extra Digital Msgs Cost<br/>
+                    Base AI Licence Cost + Extra AI Bundles Cost + Speech Cost + Extra Digital Msgs Cost<br/>
                     <br/>
                     <strong>Incremental AI Cost = </strong><br/>
-                    Total AI Software Cost - (Total Agents × Agent License Cost)
+                    Total AI Software Cost - (Total Agents × Agent Licence Cost)
                   </code>
                 </div>
 

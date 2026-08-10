@@ -44,14 +44,14 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
   const costComparisonData = [
     {
       name: 'Human Only Cost',
-      'Base Agent Licenses': results.baseSoftwareCost,
+      'Base Agent Licences': results.baseSoftwareCost,
       'AI Software Cost': 0,
       'Speech/Digital Cost': 0,
       'Human Handling Cost': results.totalCurrentAgentCostMonthly,
     },
     {
       name: 'With Virtual Agent',
-      'Base Agent Licenses': results.baseSoftwareCost,
+      'Base Agent Licences': results.baseSoftwareCost,
       'AI Software Cost': results.totalAiMonthlyCost - results.baseSoftwareCost - results.speechCost - results.additionalDigitalBundlesCost,
       'Speech/Digital Cost': results.speechCost + results.additionalDigitalBundlesCost,
       'Human Handling Cost': 0, // In this specific calculation, we are looking at the portion being automated.
@@ -276,7 +276,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
                 />
                 <Legend />
                 <Bar dataKey="Human Handling Cost" stackId="a" fill="var(--text-muted)" />
-                <Bar dataKey="Base Agent Licenses" stackId="a" fill="var(--accent-secondary)" />
+                <Bar dataKey="Base Agent Licences" stackId="a" fill="var(--accent-secondary)" />
                 <Bar dataKey="AI Software Cost" stackId="a" fill="var(--accent-primary)" />
                 <Bar dataKey="Speech/Digital Cost" stackId="a" fill="var(--accent-success)" />
               </BarChart>

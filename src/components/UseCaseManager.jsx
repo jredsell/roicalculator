@@ -3,7 +3,7 @@ import { Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
 
 const CATEGORIES = ['Triage', 'General Enquiries', 'Transactional', 'Data Collection']
 
-const CATEGORY_CONFIG = {
+export const CATEGORY_CONFIG = {
   'Triage': {
     description: "Calculates the time saved by having the AI correctly route customers, eliminating the time human agents spend answering and then transferring calls that went to the wrong area.",
     defaultUnits: 15,

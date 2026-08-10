@@ -41,7 +41,7 @@ export default function GlobalSettings({ settings, setSettings }) {
         </div>
 
         <div className="form-group">
-          {renderLabel("Agent License Cost (£/month)", "agentLicenseCost")}
+          {renderLabel("Agent Licence Cost (£/month)", "agentLicenseCost")}
           <div className="input-wrapper">
             <span className="input-icon">£</span>
             <input 
