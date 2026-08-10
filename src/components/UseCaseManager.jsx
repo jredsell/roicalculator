@@ -404,9 +404,9 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                     </>
                   ) : (
                     <>
-                      <div className="metric-label">Voice Minutes</div>
+                      <div className="metric-label">Voice Hours</div>
                       <div className="metric-value" style={{ fontSize: '1.25rem', color: 'var(--accent-secondary)' }}>
-                        {Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * (uc.aiTalkTime || 0)).toLocaleString()}
+                        {((uc.totalInteractions * (uc.engagementRate / 100)) * (uc.aiTalkTime || 0) / 60).toFixed(1)}
                       </div>
                     </>
                   )}
