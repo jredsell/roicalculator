@@ -275,6 +275,7 @@ function App() {
       bundlesNeeded,
       additionalBundlesCost,
       totalSpeechHours,
+      totalSpeechMinutes,
       speechCost,
       totalDigitalMessages,
       totalIncludedDigitalMessages,
@@ -542,14 +543,40 @@ function App() {
         {activeTab === 'settings' ? (
           <GlobalSettings settings={globalSettings} setSettings={setGlobalSettings} />
         ) : (
-          <div className="dashboard-grid">
-            <div className="no-print">
-              <UseCaseManager useCases={useCases} setUseCases={setUseCases} />
+          <>
+            <div className="dashboard-grid">
+              <div className="no-print">
+                <UseCaseManager useCases={useCases} setUseCases={setUseCases} />
+              </div>
+              <div>
+                <ResultsDashboard results={results} useCases={useCases} globalSettings={globalSettings} />
+              </div>
             </div>
-            <div>
-              <ResultsDashboard results={results} useCases={useCases} globalSettings={globalSettings} />
+
+            <div className="card mt-4 print-page" style={{ marginTop: '2rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+              <h2 className="mb-4">Total Usage Requirements</h2>
+              <div className="grid-3">
+                <div>
+                  <div className="metric-label">Total AI Units Needed</div>
+                  <div className="metric-value primary" style={{ fontSize: '2rem' }}>
+                    {Math.round(results.totalUnitsRequired).toLocaleString()}
+                  </div>
+                </div>
+                <div>
+                  <div className="metric-label">Total Speech Minutes Needed</div>
+                  <div className="metric-value" style={{ fontSize: '2rem', color: 'var(--accent-secondary)' }}>
+                    {Math.round(results.totalSpeechMinutes).toLocaleString()}
+                  </div>
+                </div>
+                <div>
+                  <div className="metric-label">Total Digital Messages Needed</div>
+                  <div className="metric-value" style={{ fontSize: '2rem', color: 'var(--accent-secondary)' }}>
+                    {Math.round(results.totalDigitalMessages).toLocaleString()}
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          </>
         )}
 
         {/* Print-Only Tables */}

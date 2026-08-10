@@ -374,7 +374,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   `*Based on fully resolving ${uc.resolutionRate || 0}% of interactions (saving ${uc.actualHandlingTime || 0} mins each) and saving ${uc.handoverTimeSaved || 0} mins on the remaining handovers.`
                 )}
               </div>
-              <div className="grid-3">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
                 <div>
                   <div className="metric-label">Total Engaged / Mo</div>
                   <div className="metric-value" style={{ fontSize: '1.25rem' }}>
@@ -393,6 +393,23 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   <div className="metric-value primary" style={{ fontSize: '1.25rem' }}>
                     {Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * uc.unitsPerInteraction).toLocaleString()}
                   </div>
+                </div>
+                <div>
+                  {uc.channel === 'Digital' ? (
+                    <>
+                      <div className="metric-label">Digital Messages</div>
+                      <div className="metric-value" style={{ fontSize: '1.25rem', color: 'var(--accent-secondary)' }}>
+                        {Math.round((uc.totalInteractions * (uc.engagementRate / 100)) * (uc.digitalMessagesPerInteraction || 0)).toLocaleString()}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="metric-label">Voice Hours</div>
+                      <div className="metric-value" style={{ fontSize: '1.25rem', color: 'var(--accent-secondary)' }}>
+                        {((uc.totalInteractions * (uc.engagementRate / 100)) * (uc.aiTalkTime || 0) / 60).toFixed(1)}
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div>
                   <div className="metric-label">Total Human Time Saved</div>
