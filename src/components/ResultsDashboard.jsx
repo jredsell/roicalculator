@@ -128,9 +128,8 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
       {isNetPositive && (
         <div className="card" style={{ background: 'linear-gradient(135deg, var(--bg-secondary), var(--primary-alpha))', borderLeft: '4px solid var(--accent-primary)' }}>
           <p style={{ fontSize: '1.2rem', margin: 0, lineHeight: '1.6', color: 'var(--text-primary)' }}>
-            By automating these use cases, you could potentially repurpose <strong style={{ color: 'var(--accent-primary)' }}>{results.totalFteSaved.toFixed(1)} FTEs</strong>. 
-            This could save you <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(results.netMonthlySavings)}</strong> monthly by reallocating staff to higher-value work or reducing headcount, 
-            and see a return on your investment in <strong style={{ color: 'var(--text-primary)' }}>{results.paybackMonths.toFixed(1)} months</strong>.
+            By automating these use cases, you could potentially free up <strong style={{ color: 'var(--accent-primary)' }}>{results.totalFteSaved.toFixed(1)} FTEs</strong> of capacity. 
+            Whether realised as direct savings through headcount reduction or as added value by reallocating staff to higher-impact work, this represents <strong style={{ color: 'var(--accent-success)' }}>{formatCurrency(results.netMonthlySavings)}</strong> monthly—delivering a return on your investment in <strong style={{ color: 'var(--text-primary)' }}>{results.paybackMonths.toFixed(1)} months</strong>.
           </p>
         </div>
       )}
