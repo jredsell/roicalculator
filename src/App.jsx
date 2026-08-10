@@ -36,7 +36,7 @@ const DEFAULT_VOICE_TRIAGE = {
   handoverTimeSaved: 1, // minutes
   transferRate: 15,
   transferTime: 3, // minutes
-  aiTalkTime: 0.017 // hours (probable AI talk time)
+  aiTalkTime: 1 // minutes (probable AI talk time)
 }
 
 const DEFAULT_DIGITAL_TRIAGE = {
@@ -70,7 +70,7 @@ const DEFAULT_VOICE_ENQUIRY = {
   handoverTimeSaved: 1.5, // 1.5 mins saved if handed over
   transferRate: 0,
   transferTime: 0,
-  aiTalkTime: 0.033 // hours AI talk time
+  aiTalkTime: 2 // minutes
 }
 
 const DEFAULT_DIGITAL_ENQUIRY = {
@@ -104,7 +104,7 @@ const DEFAULT_VOICE_TRANSACTIONAL = {
   handoverTimeSaved: 3, // 3 mins saved (e.g. ID&V and data collection already done)
   transferRate: 0,
   transferTime: 0,
-  aiTalkTime: 0.05 // hours AI talk time (reading options, confirming data)
+  aiTalkTime: 3 // minutes
 }
 
 const DEFAULT_DIGITAL_TRANSACTIONAL = {
@@ -138,7 +138,7 @@ const DEFAULT_VOICE_DATA = {
   handoverTimeSaved: 2.5, // 2.5 mins of tedious data entry saved
   transferRate: 0,
   transferTime: 0,
-  aiTalkTime: 0.033 // hours AI talk time to accurately capture spellings/numbers
+  aiTalkTime: 2 // minutes
 }
 
 const DEFAULT_DIGITAL_DATA = {
@@ -188,7 +188,7 @@ function App() {
     let totalCurrentAgentCostMonthly = 0 // Cost of humans doing this work
     let totalFteSaved = 0
     
-    let totalSpeechHours = 0
+    let totalSpeechMinutes = 0
     let totalDigitalMessages = 0
 
     // Working hours calculations
@@ -206,7 +206,7 @@ function App() {
       
       // Calculate Speech / Digital Messages
       if (uc.channel === 'Voice') {
-        totalSpeechHours += engagedInteractions * (uc.aiTalkTime || 0)
+        totalSpeechMinutes += engagedInteractions * (uc.aiTalkTime || 0)
       } else if (uc.channel === 'Digital') {
         totalDigitalMessages += engagedInteractions * (uc.digitalMessagesPerInteraction || 0)
       }
@@ -244,6 +244,7 @@ function App() {
     const additionalBundlesCost = bundlesNeeded * (globalSettings.additionalBundleCost || 0)
     
     // Speech Cost (Purchased in blocks of 100 hours)
+    const totalSpeechHours = totalSpeechMinutes / 60
     const speechBlocksNeeded = Math.ceil(totalSpeechHours / 100)
     const speechCost = speechBlocksNeeded * (globalSettings.speechCostPer100Hours || 0)
     
@@ -274,6 +275,7 @@ function App() {
       bundlesNeeded,
       additionalBundlesCost,
       totalSpeechHours,
+      totalSpeechMinutes,
       speechCost,
       totalDigitalMessages,
       totalIncludedDigitalMessages,
@@ -348,7 +350,7 @@ function App() {
     ];
     
     const useCasesData = [
-      ['Name', 'Category', 'Channel', 'Interactions/Mo', 'Engagement (%)', 'Resolution/Transfer (%)', 'Units/Interaction', 'Digital Msgs', 'AI Talk Time (hrs)', 'Full/Transfer Time (mins)', 'Handover Time (mins)'],
+      ['Name', 'Category', 'Channel', 'Interactions/Mo', 'Engagement (%)', 'Resolution/Transfer (%)', 'Units/Interaction', 'Digital Msgs', 'AI Talk Time (mins)', 'Full/Transfer Time (mins)', 'Handover Time (mins)'],
       ...useCases.map(uc => [
         uc.name,
         uc.category,

@@ -5,6 +5,38 @@ import {
 } from 'recharts'
 import { TrendingUp, TrendingDown, Users, Clock, HelpCircle, X } from 'lucide-react'
 
+const CustomYAxisTick = (props) => {
+  const { x, y, payload } = props;
+  const text = payload.value || '';
+  const fontSize = text.length > 30 ? 9 : text.length > 20 ? 10 : 12;
+  
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={4} textAnchor="end" fill="var(--text-secondary)" fontSize={fontSize}>
+        {text}
+      </text>
+    </g>
+  );
+};
+
+const CustomPieLabel = (props) => {
+  const { cx, cy, midAngle, outerRadius, percent, name } = props;
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius * 1.15;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  const textAnchor = x > cx ? 'start' : 'end';
+  
+  const text = `${name} ${(percent * 100).toFixed(0)}%`;
+  const fontSize = text.length > 30 ? 9 : text.length > 20 ? 10 : 12;
+
+  return (
+    <text x={x} y={y} fill="var(--text-secondary)" textAnchor={textAnchor} dominantBaseline="central" fontSize={fontSize}>
+      {text}
+    </text>
+  );
+};
+
 export default function ResultsDashboard({ results, useCases, globalSettings }) {
   const [activeTooltip, setActiveTooltip] = useState(null)
   
@@ -262,12 +294,12 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
                   data={useCaseData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
+                  innerRadius={50}
+                  outerRadius={80}
                   paddingAngle={5}
                   dataKey="timeSavedHours"
                   nameKey="name"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={CustomPieLabel}
                   labelLine={false}
                 >
                   {useCaseData.map((entry, index) => (
@@ -314,11 +346,11 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
               <BarChart
                 data={useCaseFinancialData}
                 layout="vertical"
-                margin={{ top: 20, right: 30, left: 40, bottom: 5 }}
+                margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} />
                 <XAxis type="number" stroke="var(--text-secondary)" tickFormatter={(val) => '£' + (val / 1000) + 'k'} />
-                <YAxis dataKey="name" type="category" stroke="var(--text-secondary)" width={100} />
+                <YAxis dataKey="name" type="category" stroke="var(--text-secondary)" width={140} tick={<CustomYAxisTick />} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}
                   formatter={(value) => formatCurrency(value)}
