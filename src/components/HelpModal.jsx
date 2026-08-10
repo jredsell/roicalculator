@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Calculator, TrendingUp, Settings as SettingsIcon, Layers, BookOpen } from 'lucide-react';
+import { X, Calculator, TrendingUp, Settings as SettingsIcon, Layers, BookOpen, ArrowRightLeft } from 'lucide-react';
 
 export default function HelpModal({ isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('settings');
@@ -51,6 +51,13 @@ export default function HelpModal({ isOpen, onClose }) {
             style={{ whiteSpace: 'nowrap' }}
           >
             <TrendingUp size={18} /> Interpreting Results
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'channel-shift' ? 'active' : ''}`}
+            onClick={() => setActiveTab('channel-shift')}
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            <ArrowRightLeft size={18} /> Channel Shift
           </button>
         </div>
 
@@ -349,6 +356,38 @@ export default function HelpModal({ isOpen, onClose }) {
                   </code>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                     If paying the annual AI cost upfront, this is how many months of human savings it takes to break even on that investment.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'channel-shift' && (
+            <div className="help-section animate-fade-in">
+              <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>Channel Shift Modeller</h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+                Understand how the system models the impact of deflecting volume from Voice to Digital channels.
+              </p>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '1.5rem' }}>
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--accent-primary)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>1. How the Shift Works</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    The modeller automatically pairs up your Voice and Digital use cases based on their <strong>Category</strong>. For example, it pairs "Voice Triage" with "Digital Triage". When you use the slider to shift 40%, it mathematically deducts 40% of the interaction volume from Voice Triage and adds it to Digital Triage.
+                  </p>
+                </div>
+
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--accent-secondary)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>2. Cost Arbitrage</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    Voice interactions require Speech processing (which costs several pounds per 100 hours), whereas Digital interactions only consume text messages (which cost pennies per bundle). Moving volume from Voice to Digital drops your expensive Speech costs significantly while only marginally increasing your Digital Message costs, yielding strong ROI.
+                  </p>
+                </div>
+
+                <div className="help-card" style={{ background: 'var(--btn-secondary-bg)', padding: '1.25rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid var(--accent-success)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>3. The "Return to Voice" Reality</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    While digital is cheaper and easier for routine tasks, customers still overwhelmingly prefer human voice for high-urgency or complex issues. The industry average for a successful digital shift with an excellent AI implementation sits between <strong>40% and 60%</strong>. The modeller defaults to 40% to provide a realistic, defensible business case rather than assuming an unrealistic 100% digital transition.
                   </p>
                 </div>
               </div>
