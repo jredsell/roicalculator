@@ -1,8 +1,11 @@
 export function calculateResults(useCases, globalSettings) {
   let totalUnitsRequired = 0;
   let totalTimeSavedMinutes = 0;
-  let totalCurrentAgentCostMonthly = 0; // Cost of humans doing this work
+  let totalCurrentAgentCostMonthly = 0; // Cost of humans doing this work (the time saved portion)
   let totalFteSaved = 0;
+
+  let totalOriginalEngagedMinutes = 0;
+  let totalRemainingHumanMinutes = 0;
 
   let totalSpeechMinutes = 0;
   let totalDigitalMessages = 0;
@@ -32,10 +35,19 @@ export function calculateResults(useCases, globalSettings) {
     if (uc.category === 'Triage') {
       const transferredInteractions = engagedInteractions * ((uc.transferRate || 0) / 100);
       timeSaved = transferredInteractions * (uc.transferTime || 0);
+      
+      totalOriginalEngagedMinutes += timeSaved;
+      totalRemainingHumanMinutes += 0;
     } else {
       const fullTimeSaved = fullyResolvedInteractions * (uc.actualHandlingTime || 0);
       const partialTimeSaved = handedOverInteractions * (uc.handoverTimeSaved || 0);
       timeSaved = fullTimeSaved + partialTimeSaved;
+      
+      const originalMinutes = engagedInteractions * (uc.actualHandlingTime || 0);
+      const remainingMinutes = originalMinutes - timeSaved;
+      
+      totalOriginalEngagedMinutes += originalMinutes;
+      totalRemainingHumanMinutes += remainingMinutes;
     }
     totalTimeSavedMinutes += timeSaved;
 
@@ -43,11 +55,17 @@ export function calculateResults(useCases, globalSettings) {
     const fteSaved = monthlyMinutesPerFte > 0 ? (timeSaved / monthlyMinutesPerFte) : 0;
     totalFteSaved += fteSaved;
 
-    // Current human cost (monthly) for the automated portion if humans did it
     // Annual cost / 12 = monthly cost per FTE
     const monthlyFteCost = (globalSettings.fullyLoadedAgentCost || 0) / 12;
     totalCurrentAgentCostMonthly += fteSaved * monthlyFteCost;
   });
+
+  const originalEngagedFte = monthlyMinutesPerFte > 0 ? (totalOriginalEngagedMinutes / monthlyMinutesPerFte) : 0;
+  const remainingHumanFte = monthlyMinutesPerFte > 0 ? (totalRemainingHumanMinutes / monthlyMinutesPerFte) : 0;
+  
+  const monthlyFteCost = (globalSettings.fullyLoadedAgentCost || 0) / 12;
+  const totalOriginalEngagedCostMonthly = originalEngagedFte * monthlyFteCost;
+  const totalRemainingHumanCostMonthly = remainingHumanFte * monthlyFteCost;
 
   // Global AI Costs
   const totalIncludedUnits = (globalSettings.numberOfAgents || 0) * (globalSettings.includedAiUnits || 0);
@@ -105,6 +123,8 @@ export function calculateResults(useCases, globalSettings) {
     totalTimeSavedHours: totalTimeSavedMinutes / 60,
     totalFteSaved,
     totalCurrentAgentCostMonthly,
+    totalOriginalEngagedCostMonthly,
+    totalRemainingHumanCostMonthly,
     netMonthlySavings,
     netYearlySavings,
     roiPercentage,

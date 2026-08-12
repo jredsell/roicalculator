@@ -47,14 +47,14 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
       'Base Agent Licences': results.baseSoftwareCost,
       'AI Software Cost': 0,
       'Speech/Digital Cost': 0,
-      'Human Handling Cost': results.totalCurrentAgentCostMonthly,
+      'Human Handling Cost': results.totalOriginalEngagedCostMonthly || results.totalCurrentAgentCostMonthly,
     },
     {
       name: 'With Virtual Agent',
       'Base Agent Licences': results.baseSoftwareCost,
       'AI Software Cost': results.totalAiMonthlyCost - results.baseSoftwareCost - results.speechCost - results.additionalDigitalBundlesCost,
       'Speech/Digital Cost': results.speechCost + results.additionalDigitalBundlesCost,
-      'Human Handling Cost': 0, // In this specific calculation, we are looking at the portion being automated.
+      'Human Handling Cost': results.totalRemainingHumanCostMonthly || 0,
     }
   ]
 
@@ -64,11 +64,19 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
     const fullyResolvedInteractions = engagedInteractions * ((uc.resolutionRate || 0) / 100);
     const handedOverInteractions = engagedInteractions - fullyResolvedInteractions;
 
+    let timeSaved = 0;
+    if (uc.category === 'Triage') {
+      const transferredInteractions = engagedInteractions * ((uc.transferRate || 0) / 100);
+      timeSaved = transferredInteractions * (uc.transferTime || 0);
+    } else {
+      timeSaved = (fullyResolvedInteractions * (uc.actualHandlingTime || 0)) + (handedOverInteractions * (uc.handoverTimeSaved || 0));
+    }
+
     return {
       id: uc.id,
       name: uc.name,
       units: engagedInteractions * (uc.unitsPerInteraction || 0),
-      timeSavedHours: ((fullyResolvedInteractions * (uc.actualHandlingTime || 0)) + (handedOverInteractions * (uc.handoverTimeSaved || 0))) / 60
+      timeSavedHours: timeSaved / 60
     };
   }).filter(uc => uc.units > 0)
 
@@ -250,7 +258,7 @@ export default function ResultsDashboard({ results, useCases, globalSettings }) 
             Payback Period: {results.paybackMonths.toFixed(1)} months
           </div>
           <p className="metric-subtext mt-4">
-            Your investment pays for itself in {results.paybackMonths.toFixed(1)} months. Calculated as net savings divided by the incremental AI software cost.
+            Your investment pays for itself in {results.paybackMonths.toFixed(1)} months. Calculated as the annual incremental AI software cost divided by the gross monthly value generated.
           </p>
         </div>
       </div>
