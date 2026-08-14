@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { calculateResults } from '../utils/calculatorEngine';
-import { ArrowRightLeft, TrendingUp, TrendingDown, Clock, MessageSquare, Phone, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowRightLeft, TrendingUp, TrendingDown, Clock, MessageSquare, Phone, ChevronDown, ChevronUp, PlusCircle } from 'lucide-react';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip, Legend } from 'recharts';
 import { CATEGORY_CONFIG } from './UseCaseManager';
 
-export default function ChannelShiftModeller({ useCases, globalSettings }) {
+export default function ChannelShiftModeller({ useCases, globalSettings, onAddProjected }) {
   const [shiftPercentage, setShiftPercentage] = useState(40);
   const [digitalAssumptions, setDigitalAssumptions] = useState({});
   const [expandedCards, setExpandedCards] = useState({});
@@ -122,6 +123,21 @@ export default function ChannelShiftModeller({ useCases, globalSettings }) {
   )
 
   const voiceUseCasesList = useCases.filter(uc => uc.channel === 'Voice');
+
+  const currentChartData = [
+    { name: 'Voice', value: totalCurrentVoiceInteractions },
+    { name: 'Digital', value: totalCurrentDigitalInteractions },
+  ];
+
+  const projectedChartData = [
+    { name: 'Voice', value: totalProjectedVoiceInteractions },
+    { name: 'Digital', value: totalProjectedDigitalInteractions },
+  ];
+
+  const COLORS = {
+    'Voice': 'var(--text-muted)',
+    'Digital': 'var(--accent-primary)'
+  };
 
   return (
     <div className="flex" style={{ flexDirection: 'column', gap: '2rem' }}>
@@ -290,6 +306,70 @@ export default function ChannelShiftModeller({ useCases, globalSettings }) {
         </div>
       </div>
 
+      {/* Visual Chart */}
+      <div className="card mt-4" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+        <h3 className="mb-4">Interaction Volume Shift</h3>
+        <div className="grid-2">
+          
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <h4 className="text-secondary mb-2">Current State</h4>
+            <div style={{ width: '100%', height: '250px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={currentChartData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                  >
+                    {currentChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[entry.name]} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip 
+                    contentStyle={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}
+                    formatter={(value) => formatNumber(value)}
+                  />
+                  <Legend verticalAlign="bottom" height={36} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <h4 className="text-secondary mb-2">Projected State ({shiftPercentage}% Shift)</h4>
+            <div style={{ width: '100%', height: '250px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={projectedChartData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                  >
+                    {projectedChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[entry.name]} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip 
+                    contentStyle={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}
+                    formatter={(value) => formatNumber(value)}
+                  />
+                  <Legend verticalAlign="bottom" height={36} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
       {/* Projected Digital Assumptions */}
       <div className="card mt-4" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
         <h3 className="mb-4">Projected Digital Equivalents</h3>
@@ -301,6 +381,7 @@ export default function ChannelShiftModeller({ useCases, globalSettings }) {
           {voiceUseCasesList.map((uc) => {
             const assumptions = digitalAssumptions[uc.id];
             if (!assumptions) return null;
+            const shiftVolume = Math.round((uc.totalInteractions || 0) * (shiftPercentage / 100));
             
             return (
               <div key={uc.id} style={{ background: 'var(--bg-primary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflow: 'hidden' }}>
@@ -441,6 +522,24 @@ export default function ChannelShiftModeller({ useCases, globalSettings }) {
                     </div>
                   </div>
                 )}
+                
+                {shiftVolume > 0 && (
+                  <div style={{ padding: '0.75rem 1.25rem', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end', background: 'var(--bg-secondary)' }}>
+                    <button 
+                      className="btn btn-primary btn-sm"
+                      onClick={() => {
+                        if (onAddProjected) {
+                          const digitalEquivalent = projectedUseCases.find(p => p.id === 'projected-digital-' + uc.id);
+                          onAddProjected(uc.id, shiftVolume, digitalEquivalent);
+                        }
+                      }}
+                      title="Apply this channel shift to your main calculator"
+                      style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                    >
+                      <PlusCircle size={16} /> Apply Shift
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -450,6 +549,7 @@ export default function ChannelShiftModeller({ useCases, globalSettings }) {
             </div>
           )}
         </div>
+        
       </div>
 
     </div>

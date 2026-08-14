@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { Calculator, Download, Plus, Settings, BarChart3, Printer, HelpCircle, Upload, Save, RotateCcw, ArrowRightLeft } from 'lucide-react'
-import * as XLSX from 'xlsx'
+import { Calculator, Settings, BarChart3, HelpCircle, Upload, Save, RotateCcw, ArrowRightLeft } from 'lucide-react'
 
 import GlobalSettings from './components/GlobalSettings'
 import UseCaseManager from './components/UseCaseManager'
@@ -24,141 +23,6 @@ const DEFAULT_GLOBAL_SETTINGS = {
   fullyLoadedAgentCost: 32500 // Average UK fully-loaded cost (Salary + Employer NI + Pension + Overheads)
 }
 
-const DEFAULT_VOICE_TRIAGE = {
-  id: '1',
-  name: 'Voice Triage',
-  category: 'Triage',
-  channel: 'Voice',
-  unitsPerInteraction: 15,
-  digitalMessagesPerInteraction: 5,
-  totalInteractions: 5000,
-  engagementRate: 100,
-  resolutionRate: 0,
-  actualHandlingTime: 3, // minutes
-  handoverTimeSaved: 1, // minutes
-  transferRate: 15,
-  transferTime: 3, // minutes
-  aiTalkTime: 1 // minutes (probable AI talk time)
-}
-
-const DEFAULT_DIGITAL_TRIAGE = {
-  id: '2',
-  name: 'Digital Triage',
-  category: 'Triage',
-  channel: 'Digital',
-  unitsPerInteraction: 5,
-  digitalMessagesPerInteraction: 4, // 4 messages sent by AI
-  totalInteractions: 3000,
-  engagementRate: 100,
-  resolutionRate: 0,
-  actualHandlingTime: 2, // minutes
-  handoverTimeSaved: 1, // minutes
-  transferRate: 15,
-  transferTime: 1.5, // 1.5 minutes of active agent handling time
-  aiTalkTime: 0 
-}
-
-const DEFAULT_VOICE_ENQUIRY = {
-  id: '3',
-  name: 'Voice GenAI Enquiry',
-  category: 'General Enquiries',
-  channel: 'Voice',
-  unitsPerInteraction: 30, // GenAI uses more processing units
-  digitalMessagesPerInteraction: 0,
-  totalInteractions: 5000,
-  engagementRate: 100,
-  resolutionRate: 65, // 65% containment for a robust GenAI Knowledge Base
-  actualHandlingTime: 4, // 4 mins human handling time
-  handoverTimeSaved: 1.5, // 1.5 mins saved if handed over
-  transferRate: 0,
-  transferTime: 0,
-  aiTalkTime: 2 // minutes
-}
-
-const DEFAULT_DIGITAL_ENQUIRY = {
-  id: '4',
-  name: 'Digital GenAI Enquiry',
-  category: 'General Enquiries',
-  channel: 'Digital',
-  unitsPerInteraction: 20, 
-  digitalMessagesPerInteraction: 8, // More messages for a GenAI back-and-forth
-  totalInteractions: 3000,
-  engagementRate: 100,
-  resolutionRate: 65, // 65% containment
-  actualHandlingTime: 3, // 3 mins active human time
-  handoverTimeSaved: 1.5, // 1.5 mins saved by passing context
-  transferRate: 0,
-  transferTime: 0,
-  aiTalkTime: 0 
-}
-
-const DEFAULT_VOICE_TRANSACTIONAL = {
-  id: '5',
-  name: 'Voice Transactional',
-  category: 'Transactional',
-  channel: 'Voice',
-  unitsPerInteraction: 40, // API calls & complex flows use more units
-  digitalMessagesPerInteraction: 0,
-  totalInteractions: 2000,
-  engagementRate: 100,
-  resolutionRate: 60, // Highly structured workflows have high containment
-  actualHandlingTime: 6, // 6 mins human time (security, CRM lookups, compliance)
-  handoverTimeSaved: 3, // 3 mins saved (e.g. ID&V and data collection already done)
-  transferRate: 0,
-  transferTime: 0,
-  aiTalkTime: 3 // minutes
-}
-
-const DEFAULT_DIGITAL_TRANSACTIONAL = {
-  id: '6',
-  name: 'Digital Transactional',
-  category: 'Transactional',
-  channel: 'Digital',
-  unitsPerInteraction: 20, 
-  digitalMessagesPerInteraction: 12, // Long flow: ID&V, collect data, confirm, receipt
-  totalInteractions: 2000,
-  engagementRate: 100,
-  resolutionRate: 60, // 60% containment
-  actualHandlingTime: 4.5, // 4.5 mins active human time
-  handoverTimeSaved: 2.5, // 2.5 mins saved
-  transferRate: 0,
-  transferTime: 0,
-  aiTalkTime: 0 
-}
-
-const DEFAULT_VOICE_DATA = {
-  id: '7',
-  name: 'Voice Data Collection',
-  category: 'Data Collection',
-  channel: 'Voice',
-  unitsPerInteraction: 20, 
-  digitalMessagesPerInteraction: 0,
-  totalInteractions: 4000,
-  engagementRate: 100,
-  resolutionRate: 0, // By definition, data collection hands over to a human
-  actualHandlingTime: 5, 
-  handoverTimeSaved: 2.5, // 2.5 mins of tedious data entry saved
-  transferRate: 0,
-  transferTime: 0,
-  aiTalkTime: 2 // minutes
-}
-
-const DEFAULT_DIGITAL_DATA = {
-  id: '8',
-  name: 'Digital Data Collection',
-  category: 'Data Collection',
-  channel: 'Digital',
-  unitsPerInteraction: 10, 
-  digitalMessagesPerInteraction: 6, // 6 messages to gather a form's worth of data
-  totalInteractions: 4000,
-  engagementRate: 100,
-  resolutionRate: 0, 
-  actualHandlingTime: 4, 
-  handoverTimeSaved: 2, // 2 mins saved
-  transferRate: 0,
-  transferTime: 0,
-  aiTalkTime: 0 
-}
 
 function App() {
   const [globalSettings, setGlobalSettings] = useState(() => {
@@ -207,7 +71,7 @@ function App() {
         const data = JSON.parse(e.target.result)
         if (data.globalSettings) setGlobalSettings(data.globalSettings)
         if (data.useCases) setUseCases(data.useCases)
-      } catch (error) {
+      } catch {
         alert("Error parsing JSON file")
       }
     }
@@ -224,132 +88,23 @@ function App() {
     }
   }
 
-  const exportExcel = () => {
-    const settingsData = [
-      ['Setting', 'Value'],
-      ['Total Number of Human Agents', globalSettings.numberOfAgents],
-      ['Agent Licence Cost (£/month)', globalSettings.agentLicenseCost],
-      ['AI Enablement Cost (£/agent/month)', globalSettings.aiEnablementCost],
-      ['Included AI Units (per agent/month)', globalSettings.includedAiUnits],
-      ['AI Unit Bundle Cost (£)', globalSettings.additionalBundleCost],
-      ['AI Unit Bundle Size', globalSettings.additionalBundleSize],
-      ['Speech Cost per 100 Hours (£)', globalSettings.speechCostPer100Hours],
-      ['Bundled Digital Messages (per agent/month)', globalSettings.includedDigitalMessages],
-      ['Digital Msg Bundle Cost (£)', globalSettings.additionalDigitalBundleCost],
-      ['Digital Msg Bundle Size', globalSettings.additionalDigitalBundleSize],
-      ['FTE Weekly Working Hours', globalSettings.fteWeeklyHours],
-      ['FTE Yearly Cost (£)', globalSettings.fullyLoadedAgentCost],
-    ];
-    
-    const useCasesData = [
-      ['Name', 'Category', 'Channel', 'Interactions/Mo', 'Engagement (%)', 'Resolution/Transfer (%)', 'Units/Interaction', 'Digital Msgs', 'AI Talk Time (mins)', 'Full/Transfer Time (mins)', 'Handover Time (mins)'],
-      ...useCases.map(uc => [
-        uc.name,
-        uc.category,
-        uc.channel,
-        uc.totalInteractions,
-        uc.engagementRate,
-        uc.category === 'Triage' ? uc.transferRate : uc.resolutionRate,
-        uc.unitsPerInteraction,
-        uc.channel === 'Digital' ? uc.digitalMessagesPerInteraction : 0,
-        uc.channel === 'Voice' ? uc.aiTalkTime : 0,
-        uc.category === 'Triage' ? uc.transferTime : uc.actualHandlingTime,
-        uc.category === 'Triage' ? 0 : uc.handoverTimeSaved
-      ])
-    ];
-
-    const resultsData = [
-      ['Metric', 'Value'],
-      ['--- AI Units ---', ''],
-      ['Total Required/Mo', results.totalUnitsRequired],
-      ['Included', results.totalIncludedUnits],
-      ['Extra Bundles Needed', results.bundlesNeeded],
-      ['Extra Cost (£/Mo)', results.additionalBundlesCost],
-      ['--- Digital Messages ---', ''],
-      ['Total Required/Mo', results.totalDigitalMessages],
-      ['Included', results.totalIncludedDigitalMessages],
-      ['Extra Bundles Needed', results.digitalBundlesNeeded],
-      ['Extra Cost (£/Mo)', results.additionalDigitalBundlesCost],
-      ['--- Voice / Speech ---', ''],
-      ['Required (Hours/Mo)', results.totalSpeechHours],
-      ['Cost (£/Mo)', results.speechCost],
-      ['--- Overall Costs & ROI ---', ''],
-      ['Total Monthly Software Costs (£)', results.totalAiMonthlyCost],
-      ['Base Software Cost (£)', results.baseSoftwareCost],
-      ['Total Time Saved (Hours/Mo)', results.totalTimeSavedHours],
-      ['Total FTEs Saved', results.totalFteSaved],
-      ['Current Human Handling Cost (£/Mo)', results.totalCurrentAgentCostMonthly],
-      ['Financial Value of Freed Capacity (£/Mo)', results.netMonthlySavings],
-      ['Financial Value of Freed Capacity (£/Yr)', results.netYearlySavings],
-      ['Estimated ROI (%)', results.roiPercentage],
-      ['Payback Period (Months)', results.paybackMonths]
-    ];
-
-    const wb = XLSX.utils.book_new();
-    
-    // Helper to format cells
-    const formatCells = (ws, formats) => {
-      Object.keys(formats).forEach(cell => {
-        if (ws[cell]) ws[cell].z = formats[cell];
-      });
-    };
-
-    const wsSettings = XLSX.utils.aoa_to_sheet(settingsData);
-    wsSettings['!cols'] = [{ wch: 35 }, { wch: 20 }];
-    formatCells(wsSettings, {
-      'B2': '#,##0',
-      'B3': '£#,##0.00',
-      'B4': '£#,##0.00',
-      'B5': '#,##0',
-      'B6': '£#,##0.00',
-      'B7': '#,##0',
-      'B8': '0.0',
-      'B9': '£#,##0.00'
-    });
-    XLSX.utils.book_append_sheet(wb, wsSettings, "Global Settings");
-    
-    const wsUseCases = XLSX.utils.aoa_to_sheet(useCasesData);
-    wsUseCases['!cols'] = [
-      { wch: 25 }, // Name
-      { wch: 20 }, // Category
-      { wch: 15 }, // Channel
-      { wch: 15 }, // Interactions/Mo
-      { wch: 15 }, // Engagement (%)
-      { wch: 25 }, // Resolution/Transfer (%)
-      { wch: 15 }, // Units/Interaction
-      { wch: 15 }, // Digital Msgs
-      { wch: 15 }, // AI Talk Time
-      { wch: 25 }, // Full/Transfer Time (mins)
-      { wch: 25 }  // Handover Time (mins)
-    ];
-    XLSX.utils.book_append_sheet(wb, wsUseCases, "Use Cases");
-    
-    const wsResults = XLSX.utils.aoa_to_sheet(resultsData);
-    wsResults['!cols'] = [{ wch: 35 }, { wch: 20 }];
-    formatCells(wsResults, {
-      'B2': '#,##0',
-      'B3': '#,##0',
-      'B4': '#,##0',
-      'B5': '#,##0',
-      'B6': '£#,##0.00',
-      'B7': '£#,##0.00',
-      'B8': '#,##0.0',
-      'B9': '#,##0.0',
-      'B10': '£#,##0.00',
-      'B11': '£#,##0.00',
-      'B12': '£#,##0.00',
-      'B13': '#,##0',
-      'B14': '#,##0',
-      'B15': '#,##0',
-      'B16': '#,##0',
-      'B17': '£#,##0.00',
-      'B18': '£#,##0.00',
-      'B19': '£#,##0.00',
-      'B20': '#,##0.0"%"'
-    });
-    XLSX.utils.book_append_sheet(wb, wsResults, "Results Summary");
-    
-    XLSX.writeFile(wb, 'AI_ROI_Report.xlsx');
+  const handleApplySingleShift = (voiceId, shiftedVolume, digitalEquivalent) => {
+    setUseCases(prev => {
+      const updated = prev.map(uc => {
+        if (uc.id === voiceId) {
+          return { ...uc, totalInteractions: Math.max(0, uc.totalInteractions - shiftedVolume) }
+        }
+        return uc
+      })
+      
+      const newDigital = {
+        ...digitalEquivalent,
+        id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString() + Math.random().toString(36).substring(2, 9)
+      }
+      
+      return [...updated, newDigital]
+    })
+    setActiveTab('calculator')
   }
 
   return (
@@ -360,7 +115,7 @@ function App() {
             <div style={{ background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', padding: '0.5rem', borderRadius: 'var(--radius-lg)' }}>
               <Calculator size={24} color="white" />
             </div>
-            <h1 style={{ margin: 0, fontSize: '2rem' }}>AI Contact Centre ROI</h1>
+            <h1 style={{ margin: 0, fontSize: '2rem' }}>AI Value & Savings Modeller</h1>
           </div>
           <p className="text-secondary" style={{ margin: 0 }}>Calculate the value of your Virtual Agent automation</p>
         </div>
@@ -399,12 +154,6 @@ function App() {
           />
 
           <button 
-            className="btn btn-secondary no-print" 
-            onClick={() => setIsHelpOpen(true)}
-          >
-            <HelpCircle size={18} /> Help & Guide
-          </button>
-          <button 
             className={`btn ${activeTab === 'calculator' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setActiveTab('calculator')}
           >
@@ -422,11 +171,11 @@ function App() {
           >
             <Settings size={18} /> Settings
           </button>
-          <button className="btn btn-secondary no-print" onClick={exportExcel}>
-            <Download size={18} /> Export Excel
-          </button>
-          <button className="btn btn-primary no-print" onClick={() => window.print()}>
-            <Printer size={18} /> Generate PDF Report
+          <button 
+            className="btn btn-secondary no-print" 
+            onClick={() => setIsHelpOpen(true)}
+          >
+            <HelpCircle size={18} /> Help & Guide
           </button>
         </div>
       </header>
@@ -434,46 +183,50 @@ function App() {
       <main id="report-content">
         {/* Printable Header - Only visible in PDF */}
         <div className="print-only" style={{ display: 'none', marginBottom: '2rem' }}>
-          <h1 style={{ color: 'black' }}>AI Contact Centre ROI Report</h1>
+          <h1 style={{ color: 'black' }}>AI Value & Savings Modeller Report</h1>
           <p>Generated on {new Date().toLocaleDateString()}</p>
         </div>
 
         {activeTab === 'settings' ? (
           <GlobalSettings settings={globalSettings} setSettings={setGlobalSettings} />
         ) : activeTab === 'channel-shift' ? (
-          <ChannelShiftModeller useCases={useCases} globalSettings={globalSettings} />
+          <ChannelShiftModeller 
+            useCases={useCases} 
+            globalSettings={globalSettings} 
+            onAddProjected={handleApplySingleShift}
+          />
         ) : (
           <>
             <div className="dashboard-grid">
               <div className="no-print">
                 <UseCaseManager useCases={useCases} setUseCases={setUseCases} />
+                
+                <div className="card mt-4" style={{ marginTop: '2rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+                  <h2 className="mb-4">Total Usage Requirements</h2>
+                  <div className="grid-3">
+                    <div>
+                      <div className="metric-label">Total AI Units Needed</div>
+                      <div className="metric-value primary" style={{ fontSize: '2rem' }}>
+                        {Math.round(results.totalUnitsRequired).toLocaleString()}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="metric-label">Total Speech Hours Needed</div>
+                      <div className="metric-value" style={{ fontSize: '2rem', color: 'var(--accent-secondary)' }}>
+                        {Math.round(results.totalSpeechHours).toLocaleString()}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="metric-label">Total Digital Messages Needed</div>
+                      <div className="metric-value" style={{ fontSize: '2rem', color: 'var(--accent-secondary)' }}>
+                        {Math.round(results.totalDigitalMessages).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div>
                 <ResultsDashboard results={results} useCases={useCases} globalSettings={globalSettings} />
-              </div>
-            </div>
-
-            <div className="card mt-4 print-page" style={{ marginTop: '2rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-              <h2 className="mb-4">Total Usage Requirements</h2>
-              <div className="grid-3">
-                <div>
-                  <div className="metric-label">Total AI Units Needed</div>
-                  <div className="metric-value primary" style={{ fontSize: '2rem' }}>
-                    {Math.round(results.totalUnitsRequired).toLocaleString()}
-                  </div>
-                </div>
-                <div>
-                  <div className="metric-label">Total Speech Hours Needed</div>
-                  <div className="metric-value" style={{ fontSize: '2rem', color: 'var(--accent-secondary)' }}>
-                    {Math.round(results.totalSpeechHours).toLocaleString()}
-                  </div>
-                </div>
-                <div>
-                  <div className="metric-label">Total Digital Messages Needed</div>
-                  <div className="metric-value" style={{ fontSize: '2rem', color: 'var(--accent-secondary)' }}>
-                    {Math.round(results.totalDigitalMessages).toLocaleString()}
-                  </div>
-                </div>
               </div>
             </div>
           </>

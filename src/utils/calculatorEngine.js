@@ -32,6 +32,7 @@ export function calculateResults(useCases, globalSettings) {
 
     // Time saved (minutes) per month
     let timeSaved = 0;
+
     if (uc.category === 'Triage') {
       const transferredInteractions = engagedInteractions * ((uc.transferRate || 0) / 100);
       timeSaved = transferredInteractions * (uc.transferTime || 0);

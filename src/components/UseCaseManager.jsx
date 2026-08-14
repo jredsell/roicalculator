@@ -80,6 +80,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
       channel: 'Voice',
       unitsPerInteraction: 30,
       digitalMessagesPerInteraction: 8,
+      digitalConcurrency: 1,
       aiTalkTime: 2,
       totalInteractions: 1000,
       engagementRate: 100,
@@ -373,6 +374,7 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                 ) : (
                   `*Based on fully resolving ${uc.resolutionRate || 0}% of interactions (saving ${uc.actualHandlingTime || 0} mins each) and saving ${uc.handoverTimeSaved || 0} mins on the remaining handovers.`
                 )}
+                {uc.channel === 'Digital' && (uc.digitalConcurrency > 1) && ` Reduced by a digital concurrency factor of ${uc.digitalConcurrency}.`}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
                 <div>
@@ -416,13 +418,14 @@ export default function UseCaseManager({ useCases, setUseCases }) {
                   <div className="metric-value success" style={{ fontSize: '1.25rem' }}>
                     {(() => {
                       const engaged = uc.totalInteractions * (uc.engagementRate / 100);
+                      const concurrency = (uc.channel === 'Digital' && uc.digitalConcurrency > 0) ? uc.digitalConcurrency : 1;
                       if (uc.category === 'Triage') {
                         const transfers = engaged * ((uc.transferRate || 0) / 100);
-                        return Math.round((transfers * (uc.transferTime || 0)) / 60).toLocaleString();
+                        return Math.round(((transfers * (uc.transferTime || 0)) / concurrency) / 60).toLocaleString();
                       } else {
                         const resolved = engaged * ((uc.resolutionRate || 0) / 100);
                         const handover = engaged - resolved;
-                        return Math.round(((resolved * (uc.actualHandlingTime || 0)) + (handover * (uc.handoverTimeSaved || 0))) / 60).toLocaleString();
+                        return Math.round((((resolved * (uc.actualHandlingTime || 0)) + (handover * (uc.handoverTimeSaved || 0))) / concurrency) / 60).toLocaleString();
                       }
                     })()} hrs
                   </div>
